@@ -1,0 +1,24 @@
+﻿  Customer.cpp
+C:\Projects\Store\Store\Customer.h(38,32): warning C4244: '=': conversion from 'const int' to 'float', possible loss of data
+  (compiling source file 'Customer.cpp')
+  
+  Store.cpp
+C:\Projects\Store\Store\Employee.h(37,38): warning C4244: 'return': conversion from 'const float' to 'const int', possible loss of data
+  (compiling source file 'Store.cpp')
+  
+C:\Projects\Store\Store\Employee.h(39,54): warning C4244: 'return': conversion from 'double' to 'const float', possible loss of data
+  (compiling source file 'Store.cpp')
+  
+C:\Projects\Store\Store\Product.h(49,38): warning C4244: 'return': conversion from 'const float' to 'const int', possible loss of data
+  (compiling source file 'Store.cpp')
+  
+C:\Projects\Store\Store\Customer.h(38,32): warning C4244: '=': conversion from 'const int' to 'float', possible loss of data
+  (compiling source file 'Store.cpp')
+  
+C:\Projects\Store\Store\Store.cpp(10,11): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Projects\Store\Store\Store.cpp(12,13): warning C4244: 'argument': conversion from 'float' to 'const int', possible loss of data
+C:\Projects\Store\Store\Store.cpp(15,16): warning C4244: 'argument': conversion from 'float' to 'const int', possible loss of data
+C:\Projects\Store\Store\Store.cpp(25,25): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Projects\Store\Store\Store.cpp(28,24): warning C4305: 'argument': truncation from 'double' to 'float'
+  Generating Code...
+  Store.vcxproj -> C:\Projects\Store\x64\Debug\Store.exe

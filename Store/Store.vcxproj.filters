@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Interfaces">
+      <UniqueIdentifier>{219dc2ad-348e-42ce-9c9a-b21f72f4ca43}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Store.cpp">
@@ -39,12 +42,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IIdentifiable.h">
-      <Filter>Header Files</Filter>
+      <Filter>Interfaces</Filter>
     </ClInclude>
     <ClInclude Include="INameable.h">
-      <Filter>Header Files</Filter>
+      <Filter>Interfaces</Filter>
     </ClInclude>
     <ClInclude Include="IObject.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Log.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Misc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

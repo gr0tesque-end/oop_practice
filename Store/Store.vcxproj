@@ -140,6 +140,8 @@
     <ClInclude Include="IIdentifiable.h" />
     <ClInclude Include="INameable.h" />
     <ClInclude Include="IObject.h" />
+    <ClInclude Include="Log.h" />
+    <ClInclude Include="Misc.h" />
     <ClInclude Include="Product.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

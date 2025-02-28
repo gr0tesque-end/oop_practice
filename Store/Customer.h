@@ -4,6 +4,7 @@
 #include <sstream>
 #include "INameable.h"
 #include "IIdentifiable.h"
+#include "Misc.h"
 
 class Customer
 	: public INameable, IIdentifiable
@@ -44,20 +45,10 @@ public:
 		return true;
 	}
 
-	virtual const int GetId() const override { return Id * 1000; }
+	virtual const int GetId() const override { return id * 1000; }
 
 	const int GetIndex() const { return _index; }
 	const float* const GetHistory() const { return _PurchaseHistory; }
-	std::string GetHistoryStr() const {
-		std::stringstream ss;
-
-		for (int i = 0; i < _index;)
-		{
-			ss << _PurchaseHistory[i] << (++i == _index) ? " ," : " ";
-		}
-
-		return ss.str();
-	}
 
 	virtual std::stringstream ToString() const override {
 		std::stringstream ss;
@@ -66,7 +57,7 @@ public:
 			<< "\tId: \"" << Id << "\",\n"
 			<< "\tName: \"" << Name << "\",\n"
 			<< "\tBalance: \"" << _balance << "\",\n" 
-			<< "\tPurchaseHistory: \"[ " <<  GetHistoryStr() << "]\",\n"
+			<< "\tPurchaseHistory: \"[ " << Misc::ArrToStr<float*>(_PurchaseHistory, _index) << "]\",\n"
 			<< "}";
 		return ss;
 	};

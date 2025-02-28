@@ -7,8 +7,9 @@ class IIdentifiable
 {
 protected:
 	static int Id;
+	int id;
 public:
-	IIdentifiable() { ++Id; }
+	IIdentifiable() : id{ Id } { ++Id; }
 
-	virtual const int GetId() const { return Id; }
+	virtual const int GetId() const { return id; }
 };

@@ -6,7 +6,7 @@
 #include "IIdentifiable.h"
 
 class Product
-	: public INameable, IIdentifiable
+	: public INameable, public IIdentifiable
 {
 	float _price;
 	int _quantity;
@@ -23,7 +23,7 @@ public:
 	}
 
 	Product(const std::string& name, float price, int quantity)
-		: _price{ price }, IObject{ this }, INameable { name }, _quantity{ } {
+		: _price{ price }, IObject{ this }, IIdentifiable{}, INameable{ name }, _quantity{} {
 	}
 #pragma region Setters
 	void Rename(const std::string& name) {
@@ -52,7 +52,7 @@ public:
 
 	bool IsInStock() const { return _quantity > 0; }
 
-	virtual const int GetId() const override { return Id * 10000; }
+	virtual const int GetId() const override { return id * 10000; }
 
 	virtual std::stringstream ToString() const override {
 		std::stringstream ss;

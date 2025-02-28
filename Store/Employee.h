@@ -20,7 +20,7 @@ public:
 		return *this;
 	}
 
-	virtual const int GetId() const override { return Id * 100; }
+	virtual const int GetId() const override { return id * 100; }
 
 	const float GetSales() const { return _sales; }
 

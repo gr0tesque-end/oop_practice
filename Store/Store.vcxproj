@@ -137,6 +137,9 @@
   <ItemGroup>
     <ClInclude Include="Customer.h" />
     <ClInclude Include="Employee.h" />
+    <ClInclude Include="IIdentifiable.h" />
+    <ClInclude Include="INameable.h" />
+    <ClInclude Include="IObject.h" />
     <ClInclude Include="Product.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

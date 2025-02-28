@@ -1,11 +1,14 @@
 #pragma once
 #include <string>
 #include <iostream>
+#include <sstream>
+#include "INameable.h"
+#include "IIdentifiable.h"
 
 class Product
+	: public INameable, IIdentifiable
 {
 	float _price;
-	std::string _name;
 	int _quantity;
 public:
 	Product()
@@ -19,13 +22,12 @@ public:
 		: Product{ name, price, 0 } {
 	}
 
-
 	Product(const std::string& name, float price, int quantity)
-		: _price{ price }, _name{ name }, _quantity{ quantity } {
+		: _price{ price }, IObject{ this }, INameable { name }, _quantity{ } {
 	}
 #pragma region Setters
 	void Rename(const std::string& name) {
-		_name = name;
+		Name = name;
 	}
 
 	void SetPrice(const float& price) {
@@ -44,11 +46,22 @@ public:
 	}
 #pragma endregion
 
-	const std::string& GetName() const { return _name; }
-
-	const int GetPrice() const { return _price; }
+	const float GetPrice() const { return _price; }
 
 	const int GetQuantity() const { return _quantity; }
 
 	bool IsInStock() const { return _quantity > 0; }
+
+	virtual const int GetId() const override { return Id * 10000; }
+
+	virtual std::stringstream ToString() const override {
+		std::stringstream ss;
+
+		ss << "{\n\tObject: \"" << "Product" << "\",\n"
+			<< "\tId: \"" << Id << "\",\n"
+			<< "\tName: \"" << Name << "\",\n"
+			<< "\tPrice: \"" << _price << "\",\n"
+			<< "\tQuantity: \"" << _quantity << "\",\n" << "}";
+		return ss;
+	};
 };

@@ -15,20 +15,30 @@ static void doFoo(Employee& e, Product& p, Customer& c) {
 	e.ChangeSales(pr);
 }
 
+int IIdentifiable::Id = -1;
+
 int main() {
 	Employee* emp1 = new Employee{ "John" };
-	Employee* emp2 = new Employee{ "Bob" };
+	IObject* emp2 = emp1;
 
 	Product* products[5]{
 		new Product{},
 		new Product{ "Kidney", 100000 },
-		new Product{ "Pasta", 5.23, 30 }
+		new Product{ "Pasta", 5.23f, 30 }
 	};
 
-	Customer c1{ "Peter", 841.2 };
+	Customer c1{ "Peter", 841.2f };
 	Customer c2{"Williams"};
 	Customer c3{};
 
+	cout << emp1->GetSales() << endl; // 0.0
+	cout << (*emp1).ChangeSales(841.60f)
+				   .GetSales() 
+		 << endl << emp1->GetName(); // John
+	
+	cout << emp2->ToString().str() << endl; // John with 841.60 in sales
+
+/*
 	doFoo(*emp1, *products[0], c1);
 	doFoo(*emp1, *products[0], c2);
 	doFoo(*emp1, *products[0], c3);
@@ -47,6 +57,6 @@ int main() {
 	{
 		cout << v[i] << endl;
 	}
-
+	*/
 	return 0;
 }

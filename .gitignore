@@ -1,0 +1,7 @@
+.DS_Store
+.vs
+bin
+debug
+obj
+x64
+x86

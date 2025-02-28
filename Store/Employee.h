@@ -1,42 +1,40 @@
 #pragma once
-
 #include <string>
 #include <iostream>
+#include <sstream>
+#include "INameable.h"
+#include "IIdentifiable.h"
 
 class Employee
+	: public INameable, public IIdentifiable
 {
 	float _sales;
-	std::string _name;
-
 public:
-	Employee()
-		: Employee{ "" } {
-	}
-	Employee(const std::string& name)
-		: Employee{ name, 0 } {
+	Employee(const std::string& name = "")
+		: INameable{ name }, IIdentifiable{ }, IObject{ this }, _sales{ 0.0f } {
 	}
 
-private:
-	Employee(const std::string& name, float sales)
-		: _sales{ sales }, _name{ name } {
-	}
-public: 
-#pragma region Setters
-	void Rename(const std::string& name) {
-		_name = name;
-	}
-
-	void ChangeSales(const int& change) {
-		if (change <= 0) { std::cerr << "\"Change\" mustn't be less or equal to 0\n"; return; }
+	Employee& ChangeSales(const float& change) {
+		if (change <= 0) { std::cerr << "\"Change\" mustn't be less or equal to 0\n"; return *this; }
 		_sales += change;
+		return *this;
 	}
-#pragma endregion
 
-	const std::string& GetName() const { return _name; }
+	virtual const int GetId() const override { return Id * 100; }
 
-	const int GetSales() const { return _sales; }
+	const float GetSales() const { return _sales; }
 
-	const float CalculateSalary() const { return _sales * 0.3; }
+	const float CalculateSalary() const { return _sales * 0.3f; }
+
+	virtual std::stringstream ToString() const override {
+		std::stringstream ss;
+
+		ss  << "{\n\tObject: \"" << "Employee" << "\",\n"
+			<< "\tId: \"" << GetId() << "\",\n"
+			<< "\tName: \"" << Name << "\",\n"
+			<< "\tSales: \"" << _sales << "\",\n" << "}";
+		return ss;
+	};
 };
 
 

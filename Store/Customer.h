@@ -1,11 +1,15 @@
 #pragma once
 #include <string>
 #include <iostream>
+#include <sstream>
+#include "INameable.h"
+#include "IIdentifiable.h"
+
 class Customer
+	: public INameable, IIdentifiable
 {
 	const short PURCHASE_HISTORY_MAX_DEPTH = 10;
 
-	std::string _name;
 	float _balance;
 
 	float* _PurchaseHistory = new float[PURCHASE_HISTORY_MAX_DEPTH];
@@ -17,7 +21,7 @@ class Customer
 	}
 public:
 	Customer(const std::string& name = "", float balance = 0)
-		: _name{ name }, _balance{ balance } {
+		: INameable{ name }, IObject{ this }, _balance{ balance } {
 	}
 
 	~Customer() {
@@ -25,7 +29,7 @@ public:
 		std::cout << "~Customer\n";
 	}
 
-	bool Buy(const int& price) {
+	bool Buy(const float& price) {
 		if (price > _balance) { std::cerr << "Insufficient funds\n"; return false; }
 		_balance -= price;
 	
@@ -39,7 +43,32 @@ public:
 
 		return true;
 	}
-	const int& GetIndex() const { return _index; }
+
+	virtual const int GetId() const override { return Id * 1000; }
+
+	const int GetIndex() const { return _index; }
 	const float* const GetHistory() const { return _PurchaseHistory; }
+	std::string GetHistoryStr() const {
+		std::stringstream ss;
+
+		for (int i = 0; i < _index;)
+		{
+			ss << _PurchaseHistory[i] << (++i == _index) ? " ," : " ";
+		}
+
+		return ss.str();
+	}
+
+	virtual std::stringstream ToString() const override {
+		std::stringstream ss;
+
+		ss << "{\n\tObject: \"" << "Customer" << "\",\n"
+			<< "\tId: \"" << Id << "\",\n"
+			<< "\tName: \"" << Name << "\",\n"
+			<< "\tBalance: \"" << _balance << "\",\n" 
+			<< "\tPurchaseHistory: \"[ " <<  GetHistoryStr() << "]\",\n"
+			<< "}";
+		return ss;
+	};
 };
 

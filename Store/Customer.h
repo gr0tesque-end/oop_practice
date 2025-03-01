@@ -25,6 +25,16 @@ public:
 		: INameable{ name }, IObject{ this }, _balance{ balance } {
 	}
 
+	Customer(const Customer& c) :
+		INameable{ c.Name }, IObject{ this },
+		_balance{ c._balance }, _index{ c._index }
+	{
+		for (int i = 0; i < _index; i++)
+		{
+			_PurchaseHistory[i] = c._PurchaseHistory[i];
+		}
+	}
+
 	~Customer() {
 		if (_PurchaseHistory) delete[] _PurchaseHistory;
 		std::cout << "~Customer\n";
@@ -54,7 +64,7 @@ public:
 		std::stringstream ss;
 
 		ss << "{\n\tObject: \"" << "Customer" << "\",\n"
-			<< "\tId: \"" << Id << "\",\n"
+			<< "\tId: \"" << GetId() << "\",\n"
 			<< "\tName: \"" << Name << "\",\n"
 			<< "\tBalance: \"" << _balance << "\",\n" 
 			<< "\tPurchaseHistory: \"[ " << Misc::ArrToStr<float*>(_PurchaseHistory, _index) << "]\",\n"

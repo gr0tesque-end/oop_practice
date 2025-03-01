@@ -41,7 +41,6 @@ public:
 	}
 
 	void ChangeQuantity(const int& change) {
-		if (change > _quantity) { std::cerr << "\"Change\" mustn't be less than \"Quantity\"\n"; return; }
 		_quantity += change;
 	}
 #pragma endregion
@@ -54,11 +53,20 @@ public:
 
 	virtual const int GetId() const override { return id * 10000; }
 
+	Product& operator++() {
+		return ++*(this);
+	}
+
+	Product& operator++(int) {
+		this->ChangeQuantity(1);
+		return *this;
+	}
+
 	virtual std::stringstream ToString() const override {
 		std::stringstream ss;
 
 		ss << "{\n\tObject: \"" << "Product" << "\",\n"
-			<< "\tId: \"" << Id << "\",\n"
+			<< "\tId: \"" << GetId() << "\",\n"
 			<< "\tName: \"" << Name << "\",\n"
 			<< "\tPrice: \"" << _price << "\",\n"
 			<< "\tQuantity: \"" << _quantity << "\",\n" << "}";

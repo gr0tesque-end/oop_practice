@@ -20,35 +20,59 @@ int IIdentifiable::Id = 0;
 
 int main() {
 	Employee* emp1 = new Employee{ "John" };
-	Employee* emp2 = emp1;
+	IObject* emp2 = emp1;
 
 	Customer c1{ "Peter", 841.2f };
 	Customer c2{"Williams"};
 	Customer c3{};
 
+	/*IObject o{};
+	IIdentifiable iid{};
+	INameable iN{};*/
+
 	std::cout << emp1->GetSales() << endl; // 0.0
 	std::cout << (*emp1).ChangeSales(841.60f)
 				   .GetSales() 
-		 << endl << emp1->GetName(); // John
+		 << endl;
 	
 	std::cout << emp2->ToString().str() << endl; // John with 841.60 in sales
 
 	std::cout << "Creating a Log...\n";
 
+	auto p = new Product{ "Pasta", 5.23f, 30 };
+
 	Log l{
-		ProductAction::Buy,
+		ProductAction::Restock,
 		{
-			emp2
+			dynamic_cast<Employee*>(emp2)
 		},
 		{
-			new Product{ "Pasta", 5.23f, 30 },
+			p,
 			new Product{ "Kidney", 100000 }
 		}
 	};
 
 	cout << "Enter a description: \n> ";
 	cin >> l;
-	cout << l;
+	cout << l << endl << *p << endl;
+
+	int RestockValue = 5;
+
+	p->ChangeQuantity(RestockValue);
+
+	Log l2{
+		ProductAction::Restock,
+		{
+			emp1
+		},
+		{
+			p
+		}
+	};
+	l2 >> "Restock: " >> RestockValue;
+	cout << l2 << endl;
+
+	cout << *p << endl << l + l2;
 /*
 	doFoo(*emp1, *products[0], c1);
 	doFoo(*emp1, *products[0], c2);

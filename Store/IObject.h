@@ -3,24 +3,11 @@
 #include <ostream>
 #include <sstream>
 
+// 5.8
 class IObject
 {
 public:
-	IObject* IObjectReference;
-
-	IObject(IObject* const obj) : IObjectReference{ obj } {}
-
-	IObject(IObject&& obj) noexcept
-		: IObjectReference{ obj.IObjectReference }
-	{
-		obj.IObjectReference = nullptr;
-	}
-
+	// 5.7
 	virtual std::stringstream ToString() const = 0;
-
-	friend std::ostream& operator<<(std::ostream& os, const IObject& l) {
-		os << l.ToString().str();
-		return os;
-	}
 };
 

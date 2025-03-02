@@ -23,7 +23,7 @@ public:
 	}
 
 	Product(const std::string& name, float price, int quantity)
-		: _price{ price }, IObject{ this }, IIdentifiable{}, INameable{ name }, _quantity{} {
+		: _price{ price }, IIdentifiable(), INameable(name), _quantity{ quantity } {
 	}
 #pragma region Setters
 	void Rename(const std::string& name) {
@@ -53,12 +53,14 @@ public:
 
 	virtual const int GetId() const override { return id * 10000; }
 
-	Product& operator++() {
-		return ++*(this);
+	// 3.6
+	Product& operator++(int) {
+		ChangeQuantity(1);
+		return *this;
 	}
 
-	Product& operator++(int) {
-		this->ChangeQuantity(1);
+	Product& operator++() {
+		ChangeQuantity(1);
 		return *this;
 	}
 

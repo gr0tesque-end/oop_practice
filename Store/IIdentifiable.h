@@ -2,6 +2,7 @@
 #include <string>
 #include "IObject.h"
 
+// 3.5
 class IIdentifiable
 	: virtual public IObject
 {

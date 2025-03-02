@@ -1,2 +1,6 @@
 ﻿  Store.cpp
+C:\Projects\Store\Store\SubscribedCustomer.h(41,18): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
+  (compiling source file 'Store.cpp')
+  
+C:\Projects\Store\Store\Store.cpp(35,32): warning C4305: 'argument': truncation from 'double' to 'float'
   Store.vcxproj -> C:\Projects\Store\x64\Debug\Store.exe

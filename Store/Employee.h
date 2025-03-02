@@ -11,7 +11,7 @@ class Employee
 	float _sales;
 public:
 	Employee(const std::string& name = "")
-		: INameable{ name }, IIdentifiable{ }, IObject{ this }, _sales{ 0.0f } {
+		: INameable(name), IIdentifiable(), _sales{0.0f} {
 	}
 
 	Employee& ChangeSales(const float& change) {

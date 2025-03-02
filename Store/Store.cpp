@@ -2,6 +2,7 @@
 #include "Employee.h"
 #include "Product.h"
 #include "Customer.h"
+#include "SubscribedCustomer.h"
 #include "Log.h"
 
 using namespace std;
@@ -18,28 +19,35 @@ static void doFoo(Employee& e, Product& p, Customer& c) {
 
 int IIdentifiable::Id = 0;
 
+//class ConcreteLog : public Log {};
+
 int main() {
+	// 5.3
 	Employee* emp1 = new Employee{ "John" };
 	IObject* emp2 = emp1;
+	std::cout << emp2->ToString().str() << endl; // John; Object Employee
 
-	Customer c1{ "Peter", 841.2f };
+	Customer* c1 = new Customer{ "Peter", 841.2f };
 	Customer c2{"Williams"};
 	Customer c3{};
+
+	// 3.4
+	const Product pConst("Shoes", 10.43, 6);
+	cout << pConst.ToString().str() << endl;
+
+	SubscribedCustomer* c = SubscribedCustomer::Subscribe(*c1, SubPlans::Advanced);
+	IIdentifiable* cPtr = dynamic_cast<IIdentifiable*>(c);
 
 	/*IObject o{};
 	IIdentifiable iid{};
 	INameable iN{};*/
 
-	std::cout << emp1->GetSales() << endl; // 0.0
-	std::cout << (*emp1).ChangeSales(841.60f)
-				   .GetSales() 
-		 << endl;
-	
-	std::cout << emp2->ToString().str() << endl; // John with 841.60 in sales
-
 	std::cout << "Creating a Log...\n";
 
-	auto p = new Product{ "Pasta", 5.23f, 30 };
+	Product* p = new Product{ "Pasta", 5.23f, 30 };
+	// 3.6
+	++(*p); // Works
+	// ++p // Carefull!! incrementing a pointer
 
 	Log l{
 		ProductAction::Restock,
@@ -54,7 +62,7 @@ int main() {
 
 	cout << "Enter a description: \n> ";
 	cin >> l;
-	cout << l << endl << *p << endl;
+	cout << l.ToString().str() << endl << p->ToString().str() << endl;
 
 	int RestockValue = 5;
 
@@ -66,13 +74,13 @@ int main() {
 			emp1
 		},
 		{
-			p
+			p, cPtr
 		}
 	};
 	l2 >> "Restock: " >> RestockValue;
-	cout << l2 << endl;
+	cout << l2.ToString().str() << endl;
 
-	cout << *p << endl << l + l2;
+	cout << p->ToString().str() << endl << (l + l2).ToString().str();
 /*
 	doFoo(*emp1, *products[0], c1);
 	doFoo(*emp1, *products[0], c2);

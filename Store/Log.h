@@ -12,12 +12,15 @@ enum ProductAction {
 	Restock
 };
 
-class Log :
+// 5.5
+class Log final :
     public IIdentifiable
 {
 	ProductAction action;
 
 	std::stringstream Description;
+
+	// 4.4
 
 	// No need to call destructor on this
 	std::forward_list<IIdentifiable*> Executioner;
@@ -25,26 +28,27 @@ class Log :
 	// Object(s) of Execution
 	std::forward_list<IIdentifiable*> OoE;
 public:
+	// 4.5
 	Log(ProductAction a,
 		std::forward_list<IIdentifiable*>&& execer,
 		std::forward_list<IIdentifiable*>&& OoE) :
-			IObject{ this }, IIdentifiable{}, action{ a },
+			IIdentifiable{}, action{ a },
 			Executioner{ std::move(execer) },
 			OoE{ std::move(OoE) } {
 
     }
-
+	// 3.1
 	Log(const Log& l)
-		: IObject{ this },
-			IIdentifiable{ l.id },
+		: 	IIdentifiable{ l.id },
 			action{ l.action },
 			Executioner{ l.Executioner },
 			OoE{ l.OoE }{ 
 		Description << l.Description.str();
 	}
 
+	// 4.6
 	Log(Log&& other) noexcept
-		: IObject{ std::move(other) },
+		: 
 		IIdentifiable{ std::move(other) },
 		action{ other.action },
 		Description{ std::move(other.Description) },
@@ -53,10 +57,9 @@ public:
 	{
 	}
 
+	// 3.2 | 3.3 | 3.6 | 4.6
 	Log& operator=(Log&& other) noexcept {
 		if (this != &other) {
-			IObjectReference = other.IObjectReference;
-			other.IObjectReference = nullptr;
 			id = other.id;
 			action = other.action;
 			Description = std::move(other.Description);
@@ -66,6 +69,7 @@ public:
 		return *this;
 	}
 
+	// 3.7
 	friend std::istream& operator>>(std::istream& is, Log& l) {
 		std::string line;
 		if (std::getline(is, line)) {

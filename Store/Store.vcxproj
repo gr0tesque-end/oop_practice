@@ -131,11 +131,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Employee.cpp" />
-    <ClCompile Include="Product.cpp" />
-    <ClCompile Include="Store.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="Customer.h" />
     <ClInclude Include="Db.h" />
     <ClInclude Include="Employee.h" />
@@ -155,6 +150,9 @@
       <FileType>Document</FileType>
     </Text>
     <None Include="ClassDiagram.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Store.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

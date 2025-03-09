@@ -29,9 +29,6 @@ std::list<std::pair<std::string, std::string>> extractKeyValuePairs(
     return result;
 }
 
-template<class T>
-T MakeObject() {}
-
 /*std::list<std::pair<std::string, std::string>> findRange(
     const std::list<std::pair<std::string, std::string>>& list, const std::string& target) {
     std::list<std::pair<std::string, std::string>> result;

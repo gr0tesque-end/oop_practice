@@ -1,5 +1,5 @@
 #include <iostream>
-#include "Db.h"
+#include "CLI.h"
 #include <list>
 #include "Regex-PresudoJSONParser.h"
 #include "ObjectFactory.h"
@@ -10,10 +10,15 @@ int IIdentifiable::Id = 0;
 
 int main() {
 	RegisterClasses();
-	auto db = Db::GetInstance("Data/db.json");
 
+	Db* db{ Db::GetInstance("Data/db.json") };
 
-	db->Flush();
+	//db->Flush();
+
+	CLI cli{};
+
+	cli.Start();
+
 	return 0;
 }
 
@@ -21,9 +26,10 @@ int main() {
 int main() {
 	//^\s+(.+): (.+),
 	RegisterClasses();
-	Employee* emp1 = new Employee{ "John" };
-	Customer* cus1 = new Customer{ "Bill", 432.5f };
-	SubscribedCustomer* cus2 = SubscribedCustomer::Subscribe(std::move(Customer("Peter", 35.6f)), SubPlans::Advanced);
+	Employee* admin = new Employee{ 0, "Admin", 0, 100, "admin" };
+	Employee* emp1 = new Employee{ 1, "John", 0, 50, "1234" };
+	Customer* cus1 = new Customer{ 1000, "Bill", 432.5f, new float[10] { 9.3f, 15.f }, 2, 0, "b123" };
+	SubscribedCustomer* cus2 = SubscribedCustomer::Subscribe(std::move(Customer(2000, "Peter", 35.6f, new float[1], 1, 0, "p123")), SubPlans::Advanced);
 	cus2->Buy(3);
 	Product* prod1 = new Product{ "Chair", 5.34f, 100 };
 	Product* prod2 = new Product{ "Table", 11.87f, 100 };
@@ -50,11 +56,11 @@ int main() {
 		{ 6, 1 }
 	};
 
-	std::list<IObject*> list{ 
+	std::list<IObject*> list{
 		emp1, cus1, cus2, prod1, prod2, l1, l2
 	};
 
-	for (IObject* obj: list)
+	for (IObject* obj : list)
 	{
 		cout << obj->ToString().str() << ',';
 	}

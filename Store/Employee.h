@@ -2,20 +2,16 @@
 #include <string>
 #include <iostream>
 #include <sstream>
-#include "INameable.h"
+#include "Account.h"
 #include "IIdentifiable.h"
 
 class Employee
-	: public INameable, public IIdentifiable
+	: public Account, public IIdentifiable
 {
 	float _sales;
 public:
-	Employee(const std::string& name = "")
-		: INameable(name), IIdentifiable(), _sales{0.0f} {
-	}
-
-	Employee(int id, const std::string& name, float sales)
-		: INameable(name), _sales{ sales } {
+	Employee(int id, const std::string& name, float sales, int Authority, const std::string& pass)
+		: Account(name, pass, Authority), _sales{ sales } {
 		this->id = id;
 	}
 
@@ -25,7 +21,7 @@ public:
 		return *this;
 	}
 
-	virtual const int GetId() const override { return id * 100; }
+	virtual const int GetId() const override { return 100 + id; }
 
 	const float GetSales() const { return _sales; }
 
@@ -37,7 +33,9 @@ public:
 		ss  << "\n{\n\tObject: \"" << "Employee" << "\",\n"
 			<< "\tId: \"" << GetId() << "\",\n"
 			<< "\tName: \"" << Name << "\",\n"
-			<< "\tSales: \"" << _sales << "\"\n" << "}";
+			<< "\tSales: \"" << _sales << "\",\n"
+			<< "\tAuthority: \"" << this->Authority << "\",\n"
+			<< "\tPass: \"" << this->password << "\"\n" << "}";
 		return ss;
 	};
 };

@@ -8,17 +8,17 @@
 #include "SubscribedCustomer.h"
 #include "ObjectFactory.h"
 
+const unsigned int FileCount{ 2 };
+
 class Db final
 {
-	const std::string& File;
-
 	Db(const std::string& file)
-		: File{ file }
 	{
-		auto res = Deserializer::Deserialize(file);
+		files[0] = file;
+		auto rawData = Deserializer::Deserialize(file);
 
-		while (!res.empty()) {
-			auto range = findAndRemoveRange(res, "Object");
+		while (!rawData.empty()) {
+			auto range = findAndRemoveRange(rawData, "Object");
 			auto obj = generateObject(range);
 			
 			if (auto* item = dynamic_cast<Product*>(obj.get())) {
@@ -36,11 +36,15 @@ class Db final
 			else {
 				std::cerr << "Unknown object type!\n";
 			}
+			
 			GlobalList.push_back(obj.release());
 		}
 	}
 	static Db* db;
+
 public:
+	std::string files[FileCount]{};
+
 	std::list<IObject*> GlobalList{};
 	std::list<Employee*> Employees{};
 	std::list<Customer*> Сustomers{};
@@ -52,7 +56,7 @@ public:
 	
 	void operator=(const Db&) = delete;
 	
-	static Db* GetInstance(const std::string& file) {
+	static Db* GetInstance(const std::string& file = "Data/db.json") {
 		if (db == nullptr) {
 			db = new Db(file);
 		}
@@ -62,7 +66,7 @@ public:
 	void Flush() const {
 		for (IObject* obj: GlobalList)
 		{
-			Serializer::Serialize(*obj, File);
+			Serializer::Serialize(*obj, files[0]);
 		}
 	}
 };

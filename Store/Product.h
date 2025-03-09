@@ -55,7 +55,7 @@ public:
 
 	bool IsInStock() const { return _quantity > 0; }
 
-	virtual const int GetId() const override { return id * 10000; }
+	virtual const int GetId() const override { return id + 10000; }
 
 	// 3.6
 	Product& operator++(int) {

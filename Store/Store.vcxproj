@@ -24,7 +24,10 @@
     <ProjectGuid>{17767ac4-112d-4b54-a356-e398e8068956}</ProjectGuid>
     <RootNamespace>Store</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <WindowsTargetPlatformMinVersion>7.0</WindowsTargetPlatformMinVersion>
+    <WindowsTargetPlatformMinVersion>8.0</WindowsTargetPlatformMinVersion>
+    <TargetFrameworkVersion>
+    </TargetFrameworkVersion>
+    <TargetFramework>net9.0</TargetFramework>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -131,6 +134,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Account.h" />
+    <ClInclude Include="Authenticator.h" />
+    <ClInclude Include="CLI.h" />
     <ClInclude Include="Customer.h" />
     <ClInclude Include="Db.h" />
     <ClInclude Include="Employee.h" />

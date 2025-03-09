@@ -47,14 +47,14 @@ public:
 	}
 
 	static _NODISCARD SubscribedCustomer* Subscribe(Customer& c, SubPlans plan) {
-		if (c.Buy((int)plan)) {
+		if (c.Buy((float)plan)) {
 			return new SubscribedCustomer(c, plan);
 		}
 		return nullptr;
 	}
 
 	static _NODISCARD SubscribedCustomer* Subscribe(Customer&& c, SubPlans plan) {
-		if (c.Buy((int)plan)) {
+		if (c.Buy((float)plan)) {
 			return new SubscribedCustomer(std::move(c), plan);
 		}
 		return nullptr;
@@ -67,8 +67,10 @@ public:
 			<< "\tId: \"" << GetId() << "\",\n"
 			<< "\tName: \"" << Name << "\",\n"
 			<< "\tBalance: \"" << _balance << "\",\n"
-			<< "\tSubscribtionTime: \"" << SubscribtionTime << "\",\n"
-			<< "\tPurchase(s): \"[ " << Misc::ArrToStr<float*>(_PurchaseHistory, _index) << " ]\"\n"
+			<< "\tPurchase(s): \"[ " << Misc::ArrToStr<float*>(_PurchaseHistory, _index) << " ]\",\n"
+			<< "\tAuthority: \"" << this->Authority << "\",\n"
+			<< "\tPass: \"" << this->password << "\",\n" 
+			<< "\tSubscribtionTime: \"" << SubscribtionTime << "\"\n"
 			<< "}";
 		return ss;
 	};

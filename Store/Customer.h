@@ -19,7 +19,7 @@ enum SubPlans : short
 };
 
 class Customer
-	: public INameable, public IIdentifiable
+	: public Account, public IIdentifiable
 {
 protected:
 	const short PURCHASE_HISTORY_MAX_DEPTH = 10;
@@ -34,8 +34,13 @@ protected:
 		_PurchaseHistory = new float[PURCHASE_HISTORY_MAX_DEPTH];
 	}
 public:
-	Customer(int Id, const std::string& name, float balance, float* purchaseHistory, int size)
-		: INameable(name), _balance{ balance } {
+	Customer(int Id,
+			 const std::string& name,
+			 float balance,
+			 float* purchaseHistory, int size,
+			 int auth,
+			 const std::string& pass)
+		: Account(name, pass, auth), _balance{ balance } {
 		id = Id;
 		for (int i = 0; i < size; i++)
 		{
@@ -43,13 +48,9 @@ public:
 		}
 	}
 
-	Customer(const std::string& name = "", float balance = 0)
-		: INameable( name ), _balance{ balance } {
-	}
-
 	// 3.1
 	Customer(const Customer& c) :
-		INameable( c.Name ),
+		Account( c.Name, c.password, c.Authority ),
 		_balance{ c._balance }, _index{ c._index }
 	{
 		_PurchaseHistory = new float[PURCHASE_HISTORY_MAX_DEPTH];
@@ -60,7 +61,7 @@ public:
 	}
 	// 3.2
 	Customer(Customer&& c) noexcept :
-		INameable{ std::move(c.Name) },
+		Account{ std::move(c.Name), std::move(c.password), std::move(c.Authority) },
 		_balance{ c._balance }, _index{ c._index },
 		_PurchaseHistory{ c._PurchaseHistory }
 	{
@@ -88,7 +89,7 @@ public:
 
 		return true;
 	}
-	virtual const int GetId() const override { return id * 1000; }
+	virtual const int GetId() const override { return 1000 + id; }
 
 	const int GetIndex() const { return _index; }
 	const float* const GetHistory() const { return _PurchaseHistory; }
@@ -100,8 +101,9 @@ public:
 			<< "\tId: \"" << GetId() << "\",\n"
 			<< "\tName: \"" << Name << "\",\n"
 			<< "\tBalance: \"" << _balance << "\",\n"
-			<< "\tPurchase(s): \"[ " << Misc::ArrToStr<float*>(_PurchaseHistory, _index) << " ]\"\n"
-			<< "}";
+			<< "\tPurchase(s): \"[ " << Misc::ArrToStr<float*>(_PurchaseHistory, _index) << " ]\",\n"
+			<< "\tAuthority: \"" << this->Authority << "\",\n"
+			<< "\tPass: \"" << this->password << "\"\n" << "}";
 		return ss;
 	};
 

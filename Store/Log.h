@@ -131,7 +131,7 @@ public:
 		return result;
 	}
 
-	virtual const int GetId() const override { return id * -1000; }
+	virtual const int GetId() const override { return - id - 10000; }
 
 	virtual std::stringstream ToString() const override {
 		std::stringstream ss;

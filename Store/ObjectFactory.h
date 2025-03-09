@@ -70,7 +70,7 @@ static void RegisterClasses() {
 	ObjectFactory::Register("Customer",
 		[](const std::string& param) {
 			auto params = split(param, '|');
-			auto history = split<float>(params.back(), ',', [](std::string& s)->float {
+			auto history = split<float>(params[4], ',', [](std::string& s)->float {
 				return atof(s.c_str());
 				});
 
@@ -80,24 +80,28 @@ static void RegisterClasses() {
 				params[2],
 				atof(params[3].c_str()),
 				history.data(),
-				history.size()
+				history.size(),
+				atoi(params[5].c_str()),
+				params[6]
 			);
 		});
 	ObjectFactory::Register("SubscribedCustomer",
 		[](const std::string& param) {
 			return std::make_unique<SubscribedCustomer>(
 				std::move(*dynamic_cast<Customer*>(ObjectFactory::Create("Customer", param).release())),
-				atoi(split(param, '|')[4].c_str())
+				atoi(split(param, '|')[7].c_str())
 			);
 		});
 	ObjectFactory::Register("Employee",
 		[](const std::string& param) {
 			auto params = split(param, '|');
-			// Id, Name, Sales
+			// Id, Name, Sales, pass
 			return std::make_unique<Employee>(
 				atoi(params[1].c_str()),
 				params[2],
-				atof(params[3].c_str())
+				atof(params[3].c_str()),
+				atoi(params[4].c_str()),
+				params[5]
 			);
 		});
 	ObjectFactory::Register("Product",

@@ -15,20 +15,20 @@ public:
 		return nullptr;
 	}
 
-	static bool VerifyLogin(const std::string& username, const std::string& password) {
+	static Account* VerifyLogin(const std::string& username, const std::string& password) {
 		auto db = Db::GetInstance();
 
 		for (Account* obj : db->Сustomers) {
 			if (obj->Name == username && obj->password == password) {
-				return true;
+				return obj;
 			}
 		}
 		for (Account* obj : db->Employees) {
 			if (obj->Name == username && obj->password == password) {
-				return true;
+				return obj;
 			}
 		}
-		return false;
+		return nullptr;
 	}
 };
 

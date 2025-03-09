@@ -3,107 +3,119 @@
 #include <vector>
 #include <iostream>
 #include <list>
-#include <map>
 #include <functional>
 #include "Authenticator.h"
+#include <unordered_map>
 
-enum InputType {
-    Option,
-    Free,
-    None
-};
-
-struct Node {
-    std::string name;
-    InputType in;
-    std::map<std::string, std::shared_ptr<Node>> options;
-    std::function<std::shared_ptr<Node>(std::string&)> PrecallAction;
-
-    Node(std::string n, InputType type,
-         std::map<std::string, std::shared_ptr<Node>>&& ops = {},
-         std::function<std::shared_ptr<Node>(std::string&)> action = nullptr)
-        : name(std::move(n)), in(type), options(std::move(ops)), PrecallAction(action) {}
-};
 class CLI {
-    std::shared_ptr<Node> root;
-
+	Account* acc{};
 public:
-    CLI() {
-        auto loginSuccess = std::make_shared<Node>("Login Successful!", None);
-        auto loginFail = std::make_shared<Node>("Login Failed. Try Again.", Free);
 
-        auto login = std::make_shared<Node>("Log in", Free, std::map<std::string, std::shared_ptr<Node>>{},
-            [loginSuccess, loginFail](std::string& input) -> std::shared_ptr<Node> {
-                std::string username, password;
+	enum class StateType {
+		OPTION,
+		FREE
+	};
 
-                std::cout << "Username > ";
-                std::getline(std::cin, username);
+	enum class State {
+		Auth,
+		LogIn,
+		SignUp,
+		INPUT_USERNAME,
+		INPUT_PASSWORD,
+		EXIT
+	};
 
-                std::cout << "Password > ";
-                std::getline(std::cin, password);
+	CLI() {
+		currentState = State::Auth;
+	}
 
-                if (Authenticator::VerifyLogin(username, password)) {
-                    return loginSuccess;
-                }
-                return loginFail;
-            }
-        );
-        loginFail->PrecallAction = [login](std::string&) -> std::shared_ptr<Node> {
-            return login; // Retry login
-            };
+	void run() {
+		while (currentState != State::EXIT) {
+			StateInfo& stateInfo = handlers[currentState];
 
-        auto signup = std::make_shared<Node>("Sign up", Free, std::map<std::string, std::shared_ptr<Node>>{},
-            [](std::string& input) -> std::shared_ptr<Node> {
-                std::cout << "Sign-up feature not implemented yet.\n";
-                return nullptr;
-            });
+			stateInfo.handler();
 
-        root = std::make_shared<Node>("Auth", Option, std::map<std::string, std::shared_ptr<Node>>{
-            {"Log in", login},
-            {"Sign up", signup}
-            });
-    }
+			if (stateInfo.type == StateType::OPTION) {
+				int choice;
+				std::cin >> choice;
 
-    void Start() {
-        std::shared_ptr<Node> current = root;
+				if (stateInfo.nextStates.find(choice) != stateInfo.nextStates.end()) {
+					currentState = stateInfo.nextStates[choice];
+				}
+				else {
+					std::cout << "Invalid choice. Please try again.\n";
+				}
+			}
+			else if (stateInfo.type == StateType::FREE) {
+				currentState = stateInfo.nextState;
+			}
+		}
 
-        while (current) {
-            std::cout << '[' << current->name << ']' << "\n";
+		std::cout << "Exiting CLI. Goodbye!\n";
+	}
 
-            if (current->in == Option) {
-                int i = 1;
-                std::vector<std::pair<std::string, std::shared_ptr<Node>>> choices;
-                for (const auto& option : current->options) {
-                    std::cout << i << ". " << option.first << std::endl;
-                    choices.emplace_back(option.first, option.second);
-                    ++i;
-                }
+private:
+	struct StateInfo {
+		StateType type;
+		std::function<void()> handler;
+		std::unordered_map<int, State> nextStates;
+		State nextState;
+	};
 
-                int choice;
-                std::cout << "Choose an option: ";
-                std::cin >> choice;
-                std::cin.ignore();
+	State currentState;
 
-                if (choice > 0 && choice <= static_cast<int>(choices.size())) {
-                    current = choices[choice - 1].second;
-                }
-                else {
-                    std::cout << "Invalid choice. Try again.\n";
-                }
-            }
-            else if (current->in == Free) {
-                std::string input;
-                if (current->PrecallAction) {
-                    current = current->PrecallAction(input);
-                }
-            }
-            else if (current->in == None) {
-                if (current->PrecallAction) {
-                    std::string dummy;
-                    current->PrecallAction(dummy);
-                }
-                current = nullptr;
-            }
-        }
-    }
+	std::string username;
+	std::string password;
+
+	std::unordered_map<State, StateInfo> handlers {
+			{State::Auth, {StateType::OPTION, [this]() { Start(); }, {{1, State::LogIn}, {2, State::SignUp}}, State::EXIT}},
+			{State::LogIn, {StateType::FREE, [this]() { LogIn(); }, {{1, State::INPUT_USERNAME}, {2, State::Auth}}, State::EXIT}},
+			{State::SignUp, {StateType::FREE, [this]() { handleMenu2(); }, {{1, State::INPUT_PASSWORD}, {2, State::Auth}}, State::EXIT}},
+			{State::INPUT_USERNAME, {StateType::FREE, [this]() { handleUsernameInput(); }, {}, State::LogIn}},
+			{State::INPUT_PASSWORD, {StateType::FREE, [this]() { handlePasswordInput(); }, {}, State::SignUp}}
+	};
+
+	void Start() {
+		std::cout << "[Auth]\n";
+		std::cout << "1. Log in\n";
+		std::cout << "2. Sign up\n";
+		std::cout << "> ";
+	}
+
+	void LogIn() {
+		std::string username, password;
+
+		std::cout << "[Log in]\n";
+		std::cout << "Username (.q to cancel) > ";
+		std::getline(std::cin, username);
+
+		if (username.starts_with(".q"));
+
+		std::cout << "Password > ";
+		std::getline(std::cin, password);
+
+		if (auto l = Authenticator::VerifyLogin(username, password))
+		{
+			acc = l;
+		}
+	}
+
+	void handleMenu2() {
+		std::cout << "You are in Menu 2.\n";
+		std::cout << "1. Request Password\n";
+		std::cout << "2. Go Back\n";
+		std::cout << "> ";
+	}
+
+	void handleUsernameInput() {
+		std::cout << "Enter your username: ";
+		std::cin >> username;
+		std::cout << "Username set to: " << username << "\n";
+	}
+
+	void handlePasswordInput() {
+		std::cout << "Enter your password: ";
+		std::cin >> password;
+		std::cout << "Password set.\n";
+	}
 };

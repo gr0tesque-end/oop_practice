@@ -89,6 +89,22 @@ public:
 
 		return true;
 	}
+	virtual bool Buy(Product& prod) {
+		float p = prod.GetPrice();
+		if (p > _balance) { std::cerr << "Insufficient funds\n"; return false; }
+		_balance -= p;
+
+		if (_index == PURCHASE_HISTORY_MAX_DEPTH)
+		{
+			ReInitHistory();
+			_index = 0;
+		}
+
+		_PurchaseHistory[_index++] = p;
+
+		return true;
+	}
+
 	virtual const int GetId() const override { return 1000 + id; }
 
 	const int GetIndex() const { return _index; }

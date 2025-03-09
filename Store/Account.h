@@ -39,6 +39,8 @@ public:
 		}
 	}
 
+	int GetAuthority() const { return Authority; }
+
 	friend class Authenticator;
 };
 

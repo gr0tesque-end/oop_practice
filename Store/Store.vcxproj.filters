@@ -54,13 +54,16 @@
     <ClInclude Include="Db.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CLI.h">
+    <ClInclude Include="CLI %28DON%27T USE%29.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Account.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Authenticator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CLI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -14,6 +14,11 @@ public:
 		: INameable(name), IIdentifiable(), _sales{0.0f} {
 	}
 
+	Employee(int id, const std::string& name, float sales)
+		: INameable(name), _sales{ sales } {
+		this->id = id;
+	}
+
 	Employee& ChangeSales(const float& change) {
 		if (change <= 0) { std::cerr << "\"Change\" mustn't be less or equal to 0\n"; return *this; }
 		_sales += change;

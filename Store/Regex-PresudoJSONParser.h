@@ -9,7 +9,8 @@
 
 const std::string kvp{ "^\\s+(\\w+): \"(.*)\"" };
 const std::string kvpl{ R"(^\s+(\w+\(s\)): "\[ (.*) \]")" };
-const std::string kvpa{ "^\\s+(\\w+\\(?s?\\)?): \"(.*)\"" };
+const std::string kvpa{ R"(^\s*(\w+\(?s?\)?): "\[?\s*([\w\.\-\,]*(?:\s+[\w\.\-\,]+)*)\s*\]?")"
+    /*"^\\s+(\\w+\\(?s?\\)?): \"(.*)\""*/ };
 
 
 std::list<std::pair<std::string, std::string>> extractKeyValuePairs(

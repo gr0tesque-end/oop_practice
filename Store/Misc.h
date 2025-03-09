@@ -12,9 +12,10 @@ public:
 	static std::string ArrToStr(T arr, int size, char sep = ',') {
 		std::stringstream ss;
 
-		for (int i = 0; i < size;)
+		for (int i = 0; i < size; ++i)
 		{
-			ss << * (arr + i) << (++i == size) ? " " + sep : " ";
+			ss << * (arr + i);
+			if (i < size - 1) ss << sep;
 		}
 
 		return ss.str();
@@ -25,7 +26,7 @@ public:
 		bool first = true;
 
 		for (IIdentifiable* obj : arr) {
-			if (!first) ss << ", ";
+			if (!first) ss << ',';
 			first = false;
 			ss << obj->GetId();
 		}

@@ -10,14 +10,29 @@
 
 using namespace std;
 
-static void doFoo(Employee& e, Product& p, Customer& c) {
-	if (!p.IsInStock()) return;
-	float pr = p.GetPrice();
+static std::vector<std::string> split(const std::string& s, char delim) {
+	std::vector<std::string> result;
+	std::stringstream ss(s);
+	std::string item;
 
-	if (!c.Buy(pr)) return;
-	p.ChangeQuantity(-1);
+	while (getline(ss, item, delim)) {
+		result.push_back(item);
+	}
 
-	e.ChangeSales(pr);
+	return result;
+}
+
+template<typename T>
+static std::vector<T> split(const std::string& s, char delim, T(*convertion)(std::string&)) {
+	std::vector<T> result;
+	std::stringstream ss(s);
+	std::string item;
+
+	while (getline(ss, item, delim)) {
+		result.push_back(convertion(item));
+	}
+
+	return result;
 }
 
 int IIdentifiable::Id = 0;
@@ -28,12 +43,85 @@ static void RegisterClasses() {
 	static bool c;
 	if (c) return;
 	c = 0;
-	ObjectFactory::Register("Customer", []() { return std::make_unique<Customer>(); });
-	ObjectFactory::Register("SubscribedCustomer", []() { return std::make_unique<Customer>(); });
-	ObjectFactory::Register("Employee", []() { return std::make_unique<Employee>(); });
-	ObjectFactory::Register("Product", []() { return std::make_unique<Product>(); });
-	ObjectFactory::Register("Log", []() { return std::make_unique<Log>(); });
+	ObjectFactory::Register("Customer", 
+		[](const std::string& param) {
+			auto params = split(param, '|');
+			auto history = split<float>(params.back(), ',', [](std::string& s)->float {
+				return atof(s.c_str());
+				});
+
+			// Id, Name, Balance, history, size
+			return std::make_unique<Customer>(
+				atoi(params[1].c_str()),
+				params[2],
+				atof(params[3].c_str()),
+				history.data(),
+				history.size()
+			);
+		});
+	ObjectFactory::Register("SubscribedCustomer", 
+		[](const std::string& param) {
+			return std::make_unique<SubscribedCustomer>(
+				std::move(*dynamic_cast<Customer*>(ObjectFactory::Create("Customer", param).release())),
+				atoi(split(param, '|')[4].c_str())
+			);
+		});
+	ObjectFactory::Register("Employee", 
+		[](const std::string& param) {
+			auto params = split(param, '|');
+			// Id, Name, Sales
+			return std::make_unique<Employee>(
+				atoi(params[1].c_str()),
+				params[2],
+				atof(params[3].c_str())
+			);
+		});
+	ObjectFactory::Register("Product", 
+		[](const std::string& param) { 
+			auto params = split(param, '|');
+			// Id, Name, Sales
+			return std::make_unique<Product>(
+				atoi(params[1].c_str()),
+				params[2],
+				atof(params[3].c_str()),
+				atoi(params[4].c_str())
+			);
+
+		});
+	ObjectFactory::Register("Log", 
+		[](const std::string& param)-> std::unique_ptr<IObject>{
+			auto params = split(param, '|');
+			auto args = split<int>(params[3], ',', [](std::string& s) {
+				return atoi(s.c_str());
+				});
+			auto ex = split<int>(params[5], ',', [](std::string& s) {
+				return atoi(s.c_str());
+				});
+			auto ooe = split<int>(params[6], ',', [](std::string& s) {
+				return atoi(s.c_str());
+				});
+
+			// Id, Action, Arg(s), Description, Executioner(s), OoE(s)
+			return std::make_unique<Log>(
+				atoi(params[1].c_str()),
+				atoi(params[2].c_str()),
+				args,
+				params[4],
+				ex,
+				ooe
+			);
+		});
 	c = 1;
+}
+
+static unique_ptr<IObject> generateObject(std::list<std::pair<std::string, std::string>> objStr) {
+	string str{};
+	for (auto p : objStr)
+	{
+		str += p.second + '|';
+	}
+	
+	return ObjectFactory::Create(objStr.front().second, str);
 }
 
 int main() {
@@ -42,6 +130,7 @@ int main() {
 	Employee* emp1 = new Employee{ "John" };
 	Customer* cus1 = new Customer{ "Bill", 432.5f };
 	SubscribedCustomer* cus2 = SubscribedCustomer::Subscribe(std::move(Customer("Peter", 35.6f)), SubPlans::Advanced);
+	cus2->Buy(3);
 	Product* prod1 = new Product{ "Chair", 5.34f, 100 };
 	Product* prod2 = new Product{ "Table", 11.87f, 100 };
 	Log* l1 = new Log{
@@ -76,10 +165,19 @@ int main() {
 		cout << obj->ToString().str() << ',';
 	}
 	//Serializer::Serialize(**(++std::make_move_iterator(list.begin())), "users_auth.json");
-	auto res = Deserializer::Deserialize("users_auth.json");
+	auto res = Deserializer::Deserialize("db.json");
 	findAndRemoveRange(res, "Object");
+	auto obj1 = dynamic_cast<Customer*>(
+		generateObject(findAndRemoveRange(res, "Object")).release());
+	auto obj2 = dynamic_cast<SubscribedCustomer*>(
+		generateObject(findAndRemoveRange(res, "Object")).release());
+	auto obj3 = dynamic_cast<Product*>(
+		generateObject(findAndRemoveRange(res, "Object")).release());
 	findAndRemoveRange(res, "Object");
-	findAndRemoveRange(res, "Object");
+	auto obj4 = dynamic_cast<Log*>(
+		generateObject(findAndRemoveRange(res, "Object")).release());
+	auto obj5 = dynamic_cast<Log*>(
+		generateObject(findAndRemoveRange(res, "Object")).release());
 
 
 	// 5.3

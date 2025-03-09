@@ -9,12 +9,21 @@ class IIdentifiable
 private:
 	static int Id;
 protected:
-	IIdentifiable(int id) : id{ id } {}
 	int id;
 public:
+	IIdentifiable(int id) : id{ id } {}
 	IIdentifiable() : id{ Id } { ++Id; }
 	IIdentifiable(IIdentifiable&& idObj) noexcept
 		: id{ idObj.id } {}
 
 	virtual const int GetId() const { return id; }
+	
+	virtual std::stringstream ToString() const override {
+			std::stringstream ss;
+
+			ss << "\n{\n\tObject: \"" << "<unidentified>" << "\",\n"
+				<< "\tId: \"" << GetId() << "\"\n" << '}';
+			return ss;
+	}
 };
+

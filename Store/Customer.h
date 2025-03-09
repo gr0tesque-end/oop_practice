@@ -34,6 +34,15 @@ protected:
 		_PurchaseHistory = new float[PURCHASE_HISTORY_MAX_DEPTH];
 	}
 public:
+	Customer(int Id, const std::string& name, float balance, float* purchaseHistory, int size)
+		: INameable(name), _balance{ balance } {
+		id = Id;
+		for (int i = 0; i < size; i++)
+		{
+			_PurchaseHistory[i] = purchaseHistory[i];
+		}
+	}
+
 	Customer(const std::string& name = "", float balance = 0)
 		: INameable( name ), _balance{ balance } {
 	}

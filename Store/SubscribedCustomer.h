@@ -15,6 +15,10 @@ class SubscribedCustomer :
 	int SubscribtionTime;
 
 public:
+	SubscribedCustomer(Customer&& cus, int SubscribtionTime)
+		: Customer{ std::move(cus) }, SubscribtionTime{ SubscribtionTime } {
+	}
+
 	SubscribedCustomer(const SubscribedCustomer& c) :
 		Customer(c), SubscribtionTime{ c.SubscribtionTime } {
 	}
@@ -63,6 +67,7 @@ public:
 			<< "\tId: \"" << GetId() << "\",\n"
 			<< "\tName: \"" << Name << "\",\n"
 			<< "\tBalance: \"" << _balance << "\",\n"
+			<< "\tSubscribtionTime: \"" << SubscribtionTime << "\",\n"
 			<< "\tPurchase(s): \"[ " << Misc::ArrToStr<float*>(_PurchaseHistory, _index) << " ]\"\n"
 			<< "}";
 		return ss;

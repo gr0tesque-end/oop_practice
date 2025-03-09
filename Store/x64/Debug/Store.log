@@ -1,8 +1,27 @@
 ﻿  Store.cpp
-C:\Projects\Store\Store\SubscribedCustomer.h(46,18): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
+C:\Projects\Store\Store\SubscribedCustomer.h(50,18): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
   (compiling source file 'Store.cpp')
   
-C:\Projects\Store\Store\SubscribedCustomer.h(53,18): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
+C:\Projects\Store\Store\SubscribedCustomer.h(57,18): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
+  (compiling source file 'Store.cpp')
+  
+C:\Projects\Store\Store\Store.cpp(50,16): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\memory(3597,56): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+  (compiling source file 'Store.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\memory(3597,56):
+      the template instantiation context (the oldest one first) is
+          C:\Projects\Store\Store\Store.cpp(54,16):
+          see reference to function template instantiation 'std::unique_ptr<Customer,std::default_delete<Customer>> std::make_unique<Customer,int,_Ty&,double,float*,unsigned __int64,0>(int &&,_Ty &,double &&,float *&&,unsigned __int64 &&)' being compiled
+          with
+          [
+              _Ty=std::string
+          ]
+  
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\memory(3597,56): warning C4244: 'argument': conversion from '_Ty' to 'float', possible loss of data
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\memory(3597,56): warning C4244:         with
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\memory(3597,56): warning C4244:         [
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\memory(3597,56): warning C4244:             _Ty=double
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\memory(3597,56): warning C4244:         ]
   (compiling source file 'Store.cpp')
   
   Store.vcxproj -> C:\Projects\Store\x64\Debug\Store.exe

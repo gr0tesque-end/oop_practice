@@ -39,6 +39,27 @@ public:
 			OoE{ std::move(OoE) }, args{ std::move(args) } {
 
     }
+
+	Log(int id, int a, std::vector<int>& args, std::string& desc,
+		std::vector<int>& execer,
+		std::vector<int>& OoE):
+		action{ (ProductAction)a }, Description{ desc }
+	{
+		this->id = id;
+		for (int i: execer)
+		{
+			Executioner.push_front(new IIdentifiable(i));
+		}
+		for (int i : OoE)
+		{
+			this->OoE.push_front(new IIdentifiable(i));
+		}
+		for (int i : args)
+		{
+			this->args.push_back(i);
+		}
+	}
+
 	// 3.1
 	Log(const Log& l)
 		: 	IIdentifiable{ l.id },

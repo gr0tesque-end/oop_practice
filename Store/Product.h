@@ -25,6 +25,10 @@ public:
 	Product(const std::string& name, float price, int quantity)
 		: _price{ price }, IIdentifiable(), INameable(name), _quantity{ quantity } {
 	}
+	Product(int id, const std::string& name, float price, int quantity)
+		: _price{ price }, INameable(name), _quantity{ quantity } {
+		this->id = id;
+	}
 #pragma region Setters
 	void Rename(const std::string& name) {
 		Name = name;

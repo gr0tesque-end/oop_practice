@@ -32,6 +32,18 @@ public:
 
 		return ss.str();
 	}
+	static std::string ArrToStr(const std::vector<int>& arr) {
+		std::stringstream ss;
+		bool first = true;
+
+		for (int obj : arr) {
+			if (!first) ss << ", ";
+			first = false;
+			ss << obj;
+		}
+
+		return ss.str();
+	}
 
 	/*static std::string ArrToStr(IObject* arr, int size, char sep = ',') {
 		std::stringstream ss;

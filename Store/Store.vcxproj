@@ -24,6 +24,7 @@
     <ProjectGuid>{17767ac4-112d-4b54-a356-e398e8068956}</ProjectGuid>
     <RootNamespace>Store</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformMinVersion>7.0</WindowsTargetPlatformMinVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -44,6 +45,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <CLRSupport>false</CLRSupport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -141,10 +143,16 @@
     <ClInclude Include="IObject.h" />
     <ClInclude Include="Log.h" />
     <ClInclude Include="Misc.h" />
+    <ClInclude Include="ObjectFactory.h" />
     <ClInclude Include="Product.h" />
+    <ClInclude Include="Regex-PresudoJSONParser.h" />
     <ClInclude Include="SubscribedCustomer.h" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="..\Data\users_auth.json">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+      <FileType>Document</FileType>
+    </Text>
     <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -67,11 +67,11 @@ public:
 	virtual std::stringstream ToString() const override {
 		std::stringstream ss;
 
-		ss << "{\n\tObject: \"" << "Product" << "\",\n"
+		ss << "\n{\n\tObject: \"" << "Product" << "\",\n"
 			<< "\tId: \"" << GetId() << "\",\n"
 			<< "\tName: \"" << Name << "\",\n"
 			<< "\tPrice: \"" << _price << "\",\n"
-			<< "\tQuantity: \"" << _quantity << "\",\n" << "}";
+			<< "\tQuantity: \"" << _quantity << "\"\n" << "}";
 		return ss;
 	};
 };

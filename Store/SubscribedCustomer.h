@@ -24,6 +24,11 @@ public:
 
 	}
 
+	SubscribedCustomer(Customer&& c, SubPlans plan) :
+		SubscribtionTime{ Plans.at(plan) }, Customer(std::move(c)) {
+
+	}
+
 	SubscribedCustomer(SubscribedCustomer&& c) noexcept :
 		Customer(c), SubscribtionTime{ c.SubscribtionTime }
 	{
@@ -43,5 +48,24 @@ public:
 		}
 		return nullptr;
 	}
+
+	static _NODISCARD SubscribedCustomer* Subscribe(Customer&& c, SubPlans plan) {
+		if (c.Buy((int)plan)) {
+			return new SubscribedCustomer(std::move(c), plan);
+		}
+		return nullptr;
+	}
+
+	virtual std::stringstream ToString() const override {
+		std::stringstream ss;
+
+		ss << "\n{\n\tObject: \"" << "SubscribedCustomer" << "\",\n"
+			<< "\tId: \"" << GetId() << "\",\n"
+			<< "\tName: \"" << Name << "\",\n"
+			<< "\tBalance: \"" << _balance << "\",\n"
+			<< "\tPurchase(s): \"[ " << Misc::ArrToStr<float*>(_PurchaseHistory, _index) << " ]\"\n"
+			<< "}";
+		return ss;
+	};
 };
 

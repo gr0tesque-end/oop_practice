@@ -79,7 +79,6 @@ public:
 
 		return true;
 	}
-
 	virtual const int GetId() const override { return id * 1000; }
 
 	const int GetIndex() const { return _index; }
@@ -88,11 +87,11 @@ public:
 	virtual std::stringstream ToString() const override {
 		std::stringstream ss;
 
-		ss << "{\n\tObject: \"" << "Customer" << "\",\n"
+		ss << "\n{\n\tObject: \"" << "Customer" << "\",\n"
 			<< "\tId: \"" << GetId() << "\",\n"
 			<< "\tName: \"" << Name << "\",\n"
-			<< "\tBalance: \"" << _balance << "\",\n" 
-			<< "\tPurchaseHistory: \"[ " << Misc::ArrToStr<float*>(_PurchaseHistory, _index) << "]\",\n"
+			<< "\tBalance: \"" << _balance << "\",\n"
+			<< "\tPurchase(s): \"[ " << Misc::ArrToStr<float*>(_PurchaseHistory, _index) << " ]\"\n"
 			<< "}";
 		return ss;
 	};

@@ -29,10 +29,10 @@ public:
 	virtual std::stringstream ToString() const override {
 		std::stringstream ss;
 
-		ss  << "{\n\tObject: \"" << "Employee" << "\",\n"
+		ss  << "\n{\n\tObject: \"" << "Employee" << "\",\n"
 			<< "\tId: \"" << GetId() << "\",\n"
 			<< "\tName: \"" << Name << "\",\n"
-			<< "\tSales: \"" << _sales << "\",\n" << "}";
+			<< "\tSales: \"" << _sales << "\"\n" << "}";
 		return ss;
 	};
 };

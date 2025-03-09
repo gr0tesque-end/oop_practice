@@ -20,6 +20,7 @@ class Log final :
 
 	std::stringstream Description;
 
+	std::vector<int> args;
 	// 4.4
 
 	// No need to call destructor on this
@@ -31,10 +32,11 @@ public:
 	// 4.5
 	Log(ProductAction a,
 		std::forward_list<IIdentifiable*>&& execer,
-		std::forward_list<IIdentifiable*>&& OoE) :
+		std::forward_list<IIdentifiable*>&& OoE,
+		std::vector<int>&& args) :
 			IIdentifiable{}, action{ a },
 			Executioner{ std::move(execer) },
-			OoE{ std::move(OoE) } {
+			OoE{ std::move(OoE) }, args{ std::move(args) } {
 
     }
 	// 3.1
@@ -113,13 +115,14 @@ public:
 	virtual std::stringstream ToString() const override {
 		std::stringstream ss;
 		
-		ss << "{\n\tObject: \"" << "Log" << "\",\n"
+		ss << "\n{\n\tObject: \"" << "Log" << "\",\n"
 			<< "\tId: \"" << GetId() << "\",\n"
 			<< "\tAction: \"" << action << "\",\n"
-			<< "\tDescription: \"\n\t\t" << Description.str() << "\n\t\",\n"
-			<< "\tExecutioner(s): [ " << Misc::ArrToStr(Executioner) << " ],\n"
-			<< "\tOoE(s): [ " << Misc::ArrToStr(OoE) << " ],\n"
-			<< "}\n";
+			<< "\tArg(s): \"[ " << Misc::ArrToStr(args) << " ]\",\n"
+			<< "\tDescription: \"" << Description.str() << "\",\n"
+			<< "\tExecutioner(s): \"[ " << Misc::ArrToStr(Executioner) << " ]\",\n"
+			<< "\tOoE(s): \"[ " << Misc::ArrToStr(OoE) << " ]\"\n"
+			<< "}";
 		return ss;
 	};
 };

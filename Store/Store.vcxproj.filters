@@ -56,8 +56,17 @@
     <ClInclude Include="SubscribedCustomer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Regex-PresudoJSONParser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\Data\users_auth.json" />
   </ItemGroup>
 </Project>

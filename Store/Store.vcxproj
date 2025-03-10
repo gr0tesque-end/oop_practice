@@ -136,7 +136,7 @@
   <ItemGroup>
     <ClInclude Include="Account.h" />
     <ClInclude Include="Authenticator.h" />
-    <ClInclude Include="CLI %28DON%27T USE%29.h" />
+    <ClInclude Include="CLI_old.txt" />
     <ClInclude Include="CLI.h" />
     <ClInclude Include="Customer.h" />
     <ClInclude Include="Db.h" />

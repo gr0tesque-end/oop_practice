@@ -1,8 +1,6 @@
 #include <iostream>
 #include "CLI.h"
 #include <list>
-#include "Regex-PresudoJSONParser.h"
-#include "ObjectFactory.h"
 
 using namespace std;
 
@@ -16,8 +14,6 @@ int main() {
 	//db->Flush();
 
 	CLI cli{};
-
-	cli.Start();
 
 	return 0;
 }

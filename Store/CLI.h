@@ -1,177 +1,169 @@
-#pragma once
+﻿#pragma once
 #include <string>
 #include <vector>
 #include <iostream>
 #include <tuple>
 #include <functional>
-#include "Authenticator.h"
 #include <unordered_map>
-#include <concepts>
 #include <set>
+#include <memory>
 
-template<typename T>
-concept isInputNode = requires(const T & t) {
-	t.OptionInput();
-};
-
-template<typename T>
-concept isProcessingNode = requires(const T & t) {
-	t.Start();
-};
+#include "Authenticator.h"
 
 class CLI {
+private:
+	std::shared_ptr<Account> _LogIn(const std::string& name, const std::string& pass) {
+		return std::shared_ptr<Account>(Authenticator::VerifyLogin(name, pass));
+	}
 public:
-	struct Node;
-	struct InputNode;
+	using Action = std::function<void(CLI&)>;
+	using ProcessingAction = std::function<void(CLI&, const std::vector<std::string>&)>;
 
+	Action dc;
+
+	Db* db = Db::GetInstance();
 	std::shared_ptr<Account> acc;
 
-	std::shared_ptr<Node> Current;
+	bool isEmployee{ false };
 
-	enum InputType {
-		Option,
-		Manual
+	CLI() {
+		Start();
 	};
 
-	template<typename... Args>
-	using VariadicFunctionType = std::function<void(Args...)>;
-	template<class T>
-	using FunctionType = std::function<void(T)>;
+	void Start() {
+		std::mem_fn(&CLI::Start);
+		std::cout << "[Start]" << std::endl
+			<< "Msg > Welcome to <Store>" << std::endl;
 
-	using DefaultPNodeFParamsT = std::vector<std::string>&;
-	using DefaultPNodeFType = std::function<void(DefaultPNodeFParamsT)>;
-	
-	template<class T = DefaultPNodeFType, class T2 = CLI::DefaultPNodeFParamsT> struct ProcessingNode;
+		int i1 = optionInput({ "LogIn", "SignUp" });
 
-	using DefaultPNodeT = CLI::ProcessingNode<DefaultPNodeFType, DefaultPNodeFParamsT>;
+		// Auth
+		if (i1 == 1) manualInput({ "User", "Password" }, std::mem_fn(&CLI::LogIn));
+		else manualInput({ "User", "Password", "Repeat Password" }, std::mem_fn(&CLI::SignUp));
 
-public:
-	using Node_InitializationPack = std::tuple<const char*>;
-	using InputNode_InitializationPack = std::tuple<Node_InitializationPack, CLI::InputType, std::map<std::string, std::shared_ptr<Node>>>;
-	using ProcessingNode_InitializationPack = std::tuple<Node_InitializationPack, DefaultPNodeFType>;
-	/*
-	CLI& push_back(std::shared_ptr<Node> newNode) {
-		if (!newNode) {
-			throw std::invalid_argument("Cannot push a null node.");
-		}
+		if (acc) std::cout << "Msg > Success" << std::endl;
 
-		if (!Head) {
-			
-			Head = newNode;
-			Tail = newNode;
+		if (isEmployee) MenuEmployee();
+		else MenuCustomer();
+	}
+
+	void MenuCustomer() {
+		system("cls");
+		std::mem_fn(&CLI::MenuCustomer);
+		std::cout << "[Menu]" << std::endl
+			<< "Msg > Welcome, " << acc->GetName() << std::endl;
+		int i1 = optionInput({
+			"Catalog of products",
+			"Buy a product",
+			"Deposit",
+			"Balance",
+			"History",
+			"Log out"
+			});
+	}
+
+	void MenuEmployee() {
+		system("cls");
+		dc = std::mem_fn(&CLI::MenuEmployee);
+		std::cout << "[Start]" << std::endl
+			<< "Msg > Welcome, " << acc->GetName() << " [Employee]" << std::endl;
+		int i1 = optionInput({
+			"Modify Account(s)",
+			"Modify Product(s)"
+			"See Logs",
+			"Log out"
+			});
+	}
+
+	void LogIn(const std::vector<std::string>& data) {
+		acc = _LogIn(data[0], data[1]);
+		if (!acc) {
+			std::cout << "Msg > Login failed. Try again.\n";
+			manualInput({ "User", "Password" }, std::mem_fn(&CLI::LogIn));
 		}
 		else {
-			newNode->prev = Tail; 
-			Tail->next = newNode;
-			Tail = newNode; 
-		}
-
-		return *this;
-	}
-	*/
-	CLI();
-};
-
-template<typename T>
-concept isNode = std::is_base_of_v<CLI::Node, T>;
-
-template<isNode T/*, typename I = typename ObjectData<T>::I  Overcomplicated this */>
-static std::shared_ptr<T> BuildNode(CLI::InputNode_InitializationPack pack) {
-	std::shared_ptr<T> res;
-
-	return res;
-}
-
-template<isNode T/*, typename I = typename ObjectData<T>::I  Overcomplicated this */>
-static std::shared_ptr<T> BuildNode(CLI::ProcessingNode_InitializationPack pack) {
-	std::shared_ptr<T> res = std::make_shared(std::make_from_tuple<CLI::DefaultPNodeT>(pack));
-
-
-	return res;
-}
-
-#pragma region Implementation
-
-
-struct CLI::Node {
-	std::string name;
-	// Used for the forwarding to the next handler
-	std::shared_ptr<Node> next{};
-	std::set<std::shared_ptr<Node>> branches{};
-
-	Node(std::string& n) : name{ n } {
-
-	}
-
-	virtual void Start() = 0;
-};
-
-template<class T, class T2>
-struct CLI::ProcessingNode :
-	Node
-{
-	ProcessingNode(CLI::Node_InitializationPack NP, T func)
-		: func{ func }, Node{ std::make_from_tuple<Node>(NP) } {
-
-	}
-
-	T2 params;
-	T func;
-	virtual void Start() override {
-		func(params);
-	}
-};
-
-struct CLI::InputNode :
-	CLI::Node
-{
-	std::map<std::string, std::shared_ptr<Node>> options;
-	// If InputType::Manual; Node::next should be assigned manually
-	CLI::InputType inType;
-
-	virtual void Start() override {
-		switch (inType)
-		{
-		case CLI::Option:
-			OptionInput();
-			break;
-		case CLI::Manual:
-			ManualInput();
-			break;
-		default:
-			std::cerr << "catch::default\n";
-			break;
+			if (acc->GetAuthority() >= 100) isEmployee = true;
 		}
 	}
-	void OptionInput() {
-		int i = 1;
-		std::vector<std::pair<std::string, std::shared_ptr<Node>>> choices;
-		for (const auto& option : options) {
-			std::cout << i << ". " << option.first << std::endl;
-			choices.emplace_back(option.first, option.second);
-			++i;
+
+	void SignUp(const std::vector<std::string>& data) {
+		// ^(\w+)(\<(\w+)\>\["(\w+)", ?"(\w+)"\])?$
+		std::regex pattern{
+			"^(\\w+)(\\<(\\w+)\\>\\[\"(\\w+)\", ?\"(\\w+)\"(, ?\"(\\w+)\")?\\])?$",
+			std::regex_constants::ECMAScript
+		};
+		std::smatch match;
+
+		std::list<std::string> result{};
+
+		auto begin = data[0].cbegin();
+		auto end = data[0].cend();
+
+		std::regex_search(begin, end, match, pattern);
+
+		// Username<reqby>["Admin", "admin", "100"] 
+		// "Username" at 1
+		// "CreatedBy" at 3
+		// "User" and "pass" at 4 and 5
+		// "100" at 7
+
+		if (Authenticator::VerifyUsernameExists(match[1])) {
+			std::cout << "Username already exists!" << std::endl;
+			manualInput({ "User", "Password", "Repeat Password" }, std::mem_fn(&CLI::SignUp));
+		}
+
+		if (match.size() > 2 && match.size() <= 8) {
+
+			if (match[3] == "reqby") {
+				auto temp = _LogIn(match[4].str(), match[5].str());
+				// Change here to set the threshhold for authority assignment by user
+				if (temp->GetAuthority() >= 100) {
+					int newAuth = atoi(match[7].str().c_str());
+					if (newAuth >= 100) {
+						acc = std::make_shared<Employee>(-1, match[1].str(), 0.f, newAuth, data[1]);
+						db->Employees.push_back(dynamic_cast<Employee*>(acc.get()));
+						isEmployee = true;
+					}
+					else {
+						acc = std::make_shared<Customer>(-1, match[1].str(), 0.f, nullptr, 0, newAuth, data[1]);
+						db->Customers.push_back(dynamic_cast<Customer*>(acc.get()));
+					}
+				}
+			}
+			// [Expand here]
+		}
+		if (match.size() >= 1) {
+			if (!acc) {
+				acc = std::make_shared<Customer>(-1, match[1].str(), 0.f, nullptr, 0, 0, data[1]);
+				db->Customers.push_back(dynamic_cast<Customer*>(acc.get()));
+			}
+		}
+	}
+
+	int optionInput(std::vector<std::string> options) {
+		for (int i{ 0 }; i < options.size(); ++i) {
+			std::cout << i + 1 << ". " << options[i] << std::endl;
 		}
 		std::string choice;
 		std::cout << "> ";
 		std::getline(std::cin, choice);
 
-		int c = atoi(choice.c_str());
+		int c = std::stoi(choice);
 
-		if (c > 0 && c <= choices.size()) {
-			next = choices[c - 1].second;
+		if (c > 0 && c <= options.size()) {
+			return c;
 		}
 		else {
-			std::cout << "Invalid choice. Try again.\n";
+			std::cout << "Msg > Invalid choice. Try again.\n";
+			return optionInput(options);
 		}
 	}
 
-	void ManualInput() {
-		std::vector<std::string> inputParams{ options.size() };
+	void manualInput(std::vector<std::string> inputParams, ProcessingAction nextCall) {
 		int i{};
-		for (std::pair<std::string, std::shared_ptr<Node>> o : options) {
-			std::string loc{};
-			std::string& msg = o.first;
-			std::cout << msg << " (.q to cancel) > ";
+		for (const auto& o : inputParams) {
+			std::string loc;
+			std::cout << o << " (.q to cancel) > ";
 			std::getline(std::cin, loc);
 
 			if (loc.starts_with(".q")) {
@@ -181,53 +173,6 @@ struct CLI::InputNode :
 			inputParams[i] = loc;
 			++i;
 		}
-		if (auto c = dynamic_pointer_cast<CLI::DefaultPNodeT, CLI::Node>(next)) {
-			c->params = inputParams;
-			c->Start();
-		}
-		else { std::cerr << "The CLI::Node::next isn't a 'CLI::ProcessingNode<FunctionType<std::vector<std::string>>>' type\n"; }
+		nextCall(*this, inputParams);
 	}
 };
-
-CLI::CLI() {
-	/*auto n = BuildNode<CLI::InputNode>(
-		CLI::InputNode_InitializationPack(
-			CLI::Node_InitializationPack{ "Auth" },
-			CLI::InputType::Option,
-			{}
-		)
-	);
-	n->options.insert({ "Log In", (BuildNode<CLI::DefaultPNodeT>(
-		CLI::ProcessingNode_InitializationPack(
-				CLI::Node_InitializationPack{ "Log_In_Validate" },
-				[&](std::vector<std::string>& v) {
-					acc = std::make_shared<Account>(*Authenticator::VerifyLogin(v[0], v[1]));
-					if (acc) 
-				}
-			)
-		))});*/
-
-}
-
-#pragma endregion
-
-
-/*template<typename T, typename Enable = void>
-struct ObjectData {
-	using I = void;
-};
-
-// (higher priority)
-template<typename T>
-struct ObjectData<T, std::enable_if_t<isInputNode<T>>> {
-	using I = CLI::InputNode_InitializationPack;
-};
-
-// (lower priority)
-template<typename T>
-struct ObjectData<T, std::enable_if_t<isProcessingNode<T> && !isInputNode<T>>> {
-	// Assumes the ProcessingNode; 
-	// Mod if more instances of are made of Node that needs to be checked
-	using I = CLI::ProcessingNode_InitializationPack;
-};
-*/

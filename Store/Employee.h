@@ -12,8 +12,11 @@ class Employee
 public:
 	Employee(int id, const std::string& name, float sales, int Authority, const std::string& pass)
 		: Account(name, pass, Authority), _sales{ sales } {
+		if (id < 0) return;
 		this->id = id;
 	}
+	Employee(const Employee& emp)
+		: Account{ emp }, _sales{ emp._sales } { }
 
 	Employee& ChangeSales(const float& change) {
 		if (change <= 0) { std::cerr << "\"Change\" mustn't be less or equal to 0\n"; return *this; }

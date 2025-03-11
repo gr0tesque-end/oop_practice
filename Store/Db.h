@@ -28,7 +28,7 @@ class Db final
 				Logs.push_back(item);
 			}
 			else if (auto* item = dynamic_cast<Customer*>(obj.get())) {
-				Сustomers.push_back(item);
+				Customers.push_back(item);
 			}
 			else if (auto* item = dynamic_cast<Employee*>(obj.get())) {
 				Employees.push_back(item);
@@ -43,11 +43,12 @@ class Db final
 	static Db* db;
 
 public:
+	std::shared_ptr<Account> acc;
 	std::string files[FileCount]{};
 
 	std::list<IObject*> GlobalList{};
 	std::list<Employee*> Employees{};
-	std::list<Customer*> Сustomers{};
+	std::list<Customer*> Customers{};
 	std::list<Product*> Products{};
 	std::list<Log*> Logs{};
 

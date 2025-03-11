@@ -11,10 +11,9 @@ int main() {
 
 	Db* db{ Db::GetInstance("Data/db.json") };
 
-	//db->Flush();
-
 	CLI cli{};
 
+	//db->Flush();
 	return 0;
 }
 

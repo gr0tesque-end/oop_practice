@@ -1,5 +1,6 @@
 #pragma once
 #include "INameable.h"
+#include <iostream>
 
 class Account
 	: public INameable
@@ -40,6 +41,15 @@ public:
 	}
 
 	int GetAuthority() const { return Authority; }
+
+	virtual std::stringstream ToString() const override {
+		std::stringstream ss;
+
+		ss << "\n{\n\tObject: \"" << "Account" << "\",\n"
+			<< "\tName: \"" << Name << "\",\n"
+			<< "\tAuthority: \"" << this->Authority << "\"\n" << "}";
+		return ss;
+	}
 
 	friend class Authenticator;
 };

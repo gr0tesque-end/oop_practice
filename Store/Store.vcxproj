@@ -152,11 +152,8 @@
     <ClInclude Include="SubscribedCustomer.h" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\Data\users_auth.json">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
-      <FileType>Document</FileType>
-    </Text>
     <None Include="ClassDiagram.cd" />
+    <Text Include="CLI (Latest).txt" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Store.cpp" />

@@ -41,11 +41,14 @@ public:
 			 int auth,
 			 const std::string& pass)
 		: Account(name, pass, auth), _balance{ balance } {
+		if (id < 0) return;
 		id = Id;
+		if (!purchaseHistory) return;
 		for (int i = 0; i < size; i++)
 		{
 			_PurchaseHistory[i] = purchaseHistory[i];
 		}
+		_index = size - 1;
 	}
 
 	// 3.1

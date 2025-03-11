@@ -1,0 +1,215 @@
+#pragma once
+#include <string>
+#include <vector>
+#include <iostream>
+#include <tuple>
+#include <functional>
+#include <unordered_map>
+#include <set>
+#include <memory>
+
+#include "Authenticator.h"
+
+class Account; // Forward declaration
+class Authenticator; // Forward declaration
+
+class CLI {
+public:
+    struct Node;
+    struct InputNode;
+    struct ProcessingNode;
+
+    std::shared_ptr<Account> acc;
+    std::shared_ptr<Node> current;
+
+    enum InputType {
+        Option,
+        Manual
+    };
+
+    using DefaultPNodeFParamsT = std::vector<std::string>;
+    using DefaultPNodeFType = std::function<void(DefaultPNodeFParamsT)>;
+
+    using Node_InitializationPack = std::tuple<const char*>;
+    using InputNode_InitializationPack = std::tuple<Node_InitializationPack, CLI::InputType, std::map<std::string, std::shared_ptr<Node>>>;
+    using ProcessingNode_InitializationPack = std::tuple<Node_InitializationPack, DefaultPNodeFType>;
+
+    CLI();
+    void run();
+
+private:
+    void buildAuthNode();
+};
+
+struct CLI::Node {
+    std::string name;
+    std::shared_ptr<Node> next{};
+    std::set<std::shared_ptr<Node>> branches{};
+
+    Node(const char* n) : name{ n } {}
+    virtual void start() = 0;
+    virtual ~Node() = default;
+};
+
+struct CLI::ProcessingNode : Node {
+    DefaultPNodeFType func;
+    DefaultPNodeFParamsT params;
+
+    ProcessingNode(Node_InitializationPack NP, DefaultPNodeFType f)
+        : Node{ std::get<0>(NP) }, func{ std::move(f) } {
+    }
+
+    void start() override {
+        func(params);
+    }
+};
+
+struct CLI::InputNode : Node {
+    std::map<std::string, std::shared_ptr<Node>> options;
+    CLI::InputType inType;
+
+    InputNode(Node_InitializationPack NP, CLI::InputType it, std::map<std::string, std::shared_ptr<Node>> opt)
+        : Node{ std::get<0>(NP) }, inType{ it }, options{ std::move(opt) } {
+    }
+
+    void start() override {
+        switch (inType) {
+        case CLI::Option:
+            optionInput();
+            break;
+        case CLI::Manual:
+            manualInput();
+            break;
+        default:
+            std::cerr << "catch::default\n";
+            break;
+        }
+    }
+
+    void optionInput() {
+        int i = 1;
+        std::vector<std::pair<std::string, std::shared_ptr<Node>>> choices;
+        for (const auto& option : options) {
+            std::cout << i << ". " << option.first << std::endl;
+            choices.emplace_back(option.first, option.second);
+            ++i;
+        }
+        std::string choice;
+        std::cout << "> ";
+        std::getline(std::cin, choice);
+
+        int c = std::stoi(choice);
+
+        if (c > 0 && c <= choices.size()) {
+            next = choices[c - 1].second;
+        }
+        else {
+            std::cout << "Invalid choice. Try again.\n";
+        }
+    }
+
+    void manualInput() {
+        std::vector<std::string> inputParams(options.size());
+        int i{};
+        for (const auto& o : options) {
+            std::string loc;
+            std::cout << o.first << " (.q to cancel) > ";
+            std::getline(std::cin, loc);
+
+            if (loc.starts_with(".q")) {
+                return;
+            }
+
+            inputParams[i] = loc;
+            ++i;
+        }
+        if (auto c = std::dynamic_pointer_cast<ProcessingNode>(next)) {
+            c->params = inputParams;
+            c->start();
+        }
+        else {
+            std::cerr << "The CLI::Node::next isn't a 'CLI::ProcessingNode' type\n";
+        }
+    }
+};
+
+CLI::CLI() {
+    buildAuthNode();
+    current = std::make_shared<InputNode>(
+        Node_InitializationPack{ "Auth" },
+        InputType::Option,
+        std::map<std::string, std::shared_ptr<Node>>{
+            { "Log In", std::make_shared<InputNode>(
+                Node_InitializationPack{ "Log In" },
+                InputType::Manual,
+                std::map<std::string, std::shared_ptr<Node>>{
+                    { "username", nullptr },
+                    { "password", nullptr }
+            }
+            )},
+            { "Sign Up", std::make_shared<InputNode>(
+                Node_InitializationPack{ "Sign Up" },
+                InputType::Manual,
+                std::map<std::string, std::shared_ptr<Node>>{
+                    { "username", nullptr },
+                    { "password", nullptr }
+                }
+            ) }
+    }
+    );
+}
+
+void CLI::buildAuthNode() {
+    std::shared_ptr<InputNode> loginNode;
+
+    auto loginValidationNode = std::make_shared<ProcessingNode>(
+        Node_InitializationPack{ "Log In Validation" },
+        [this, loginNode](DefaultPNodeFParamsT params) {
+            acc = std::shared_ptr<Account>(Authenticator::VerifyLogin(params[0], params[1]));
+            if (acc) {
+                current = std::make_shared<InputNode>(
+                    Node_InitializationPack{ "Menu" },
+                    InputType::Option,
+                    std::map<std::string, std::shared_ptr<Node>>{
+                        { "catalog", nullptr },
+                        { "buy", nullptr }
+                }
+                );
+            }
+            else {
+                std::cout << "Login failed. Try again.\n";
+                current = loginNode;
+            }
+        }
+    );
+
+    loginNode = std::make_shared<InputNode>(
+        Node_InitializationPack{ "Log In" },
+        InputType::Manual,
+        std::map<std::string, std::shared_ptr<Node>>{
+            { "Password", loginValidationNode },
+            { "Username", loginValidationNode }
+    }
+    );
+
+    current = std::make_shared<InputNode>(
+        Node_InitializationPack{ "Auth" },
+        InputType::Option,
+        std::map<std::string, std::shared_ptr<Node>>{
+            { "Log In", loginNode },
+            { "Sign Up", nullptr }
+    }
+    );
+}
+
+void CLI::run() {
+    while (current) {
+        current->start();
+        if (current->next) {
+            current = current->next;
+        }
+        else {
+            break;
+        }
+    }
+}

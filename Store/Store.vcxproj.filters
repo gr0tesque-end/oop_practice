@@ -71,7 +71,9 @@
     <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\Data\users_auth.json" />
+    <Text Include="CLI (Latest).txt">
+      <Filter>Header Files</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Store.cpp">

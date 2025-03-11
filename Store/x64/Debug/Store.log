@@ -2,68 +2,28 @@
 C:\Projects\Store\Store\ObjectFactory.h(74,16): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Store.cpp')
   
-C:\Projects\Store\Store\CLI.h(121,7): error C2679: binary '=': no operator found which takes a right-hand operand of type '_Ret' (or there is no acceptable conversion)
-C:\Projects\Store\Store\CLI.h(121,7): error C2679:         with
-C:\Projects\Store\Store\CLI.h(121,7): error C2679:         [
-C:\Projects\Store\Store\CLI.h(121,7): error C2679:             _Ret=void
-C:\Projects\Store\Store\CLI.h(121,7): error C2679:         ]
+C:\Projects\Store\Store\CLI.h(34,8): warning C4834: discarding return value of function with [[nodiscard]] attribute
   (compiling source file 'Store.cpp')
-      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\memory(1699,17):
-      could be 'std::shared_ptr<CLI::Node> &std::shared_ptr<CLI::Node>::operator =(std::shared_ptr<CLI::Node> &&) noexcept'
-          C:\Projects\Store\Store\CLI.h(121,7):
-          'std::shared_ptr<CLI::Node> &std::shared_ptr<CLI::Node>::operator =(std::shared_ptr<CLI::Node> &&) noexcept': cannot convert argument 2 from '_Ret' to 'std::shared_ptr<CLI::Node> &&'
-          with
-          [
-              _Ret=void
-          ]
-              C:\Projects\Store\Store\CLI.h(121,20):
-              Expressions of type void cannot be converted to other types
-      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\memory(1688,17):
-      or       'std::shared_ptr<CLI::Node> &std::shared_ptr<CLI::Node>::operator =(const std::shared_ptr<CLI::Node> &) noexcept'
-          C:\Projects\Store\Store\CLI.h(121,7):
-          'std::shared_ptr<CLI::Node> &std::shared_ptr<CLI::Node>::operator =(const std::shared_ptr<CLI::Node> &) noexcept': cannot convert argument 2 from '_Ret' to 'const std::shared_ptr<CLI::Node> &'
-          with
-          [
-              _Ret=void
-          ]
-              C:\Projects\Store\Store\CLI.h(121,20):
-              Expressions of type void cannot be converted to other types
-      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\memory(1722,17):
-      or       'std::shared_ptr<CLI::Node> &std::shared_ptr<CLI::Node>::operator =(std::unique_ptr<_Ux,_Dx> &&)'
-          C:\Projects\Store\Store\CLI.h(121,7):
-          'std::shared_ptr<CLI::Node> &std::shared_ptr<CLI::Node>::operator =(std::unique_ptr<_Ux,_Dx> &&)': could not deduce template argument for 'std::unique_ptr<_Ux,_Dx> &&' from '_Ret'
-          with
-          [
-              _Ret=void
-          ]
-      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\memory(1705,17):
-      or       'std::shared_ptr<CLI::Node> &std::shared_ptr<CLI::Node>::operator =(std::shared_ptr<_Ty2> &&) noexcept'
-          C:\Projects\Store\Store\CLI.h(121,7):
-          'std::shared_ptr<CLI::Node> &std::shared_ptr<CLI::Node>::operator =(std::shared_ptr<_Ty2> &&) noexcept': could not deduce template argument for 'std::shared_ptr<_Ty2> &&' from '_Ret'
-          with
-          [
-              _Ret=void
-          ]
-      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\memory(1694,17):
-      or       'std::shared_ptr<CLI::Node> &std::shared_ptr<CLI::Node>::operator =(const std::shared_ptr<_Ty2> &) noexcept'
-          C:\Projects\Store\Store\CLI.h(121,7):
-          'std::shared_ptr<CLI::Node> &std::shared_ptr<CLI::Node>::operator =(const std::shared_ptr<_Ty2> &) noexcept': could not deduce template argument for 'const std::shared_ptr<_Ty2> &' from '_Ret'
-          with
-          [
-              _Ret=void
-          ]
-      C:\Projects\Store\Store\CLI.h(121,7):
-      while trying to match the argument list '(std::shared_ptr<CLI::Node>, _Ret)'
-          with
-          [
-              _Ret=void
-          ]
-      C:\Projects\Store\Store\CLI.h(121,7):
-      the template instantiation context (the oldest one first) is
-          C:\Projects\Store\Store\CLI.h(185,4):
-          see reference to class template instantiation 'CLI::ProcessingNode<CLI::DefaultPNodeFType,CLI::DefaultPNodeFParamsT>' being compiled
-          C:\Projects\Store\Store\CLI.h(120,15):
-          while compiling class template member function 'void CLI::ProcessingNode<CLI::DefaultPNodeFType,CLI::DefaultPNodeFParamsT>::Start(void)'
-              C:\Projects\Store\Store\CLI.h(186,12):
-              see the first reference to 'CLI::ProcessingNode<CLI::DefaultPNodeFType,CLI::DefaultPNodeFParamsT>::Start' in 'CLI::InputNode::ManualInput'
   
+C:\Projects\Store\Store\CLI.h(52,8): warning C4834: discarding return value of function with [[nodiscard]] attribute
+  (compiling source file 'Store.cpp')
+  
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\memory(3597,56): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+  (compiling source file 'Store.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\memory(3597,56):
+      the template instantiation context (the oldest one first) is
+          C:\Projects\Store\Store\ObjectFactory.h(78,16):
+          see reference to function template instantiation 'std::unique_ptr<Customer,std::default_delete<Customer>> std::make_unique<Customer,int,_Ty&,double,float*,unsigned __int64,int,_Ty&,0>(int &&,_Ty &,double &&,float *&&,unsigned __int64 &&,int &&,_Ty &)' being compiled
+          with
+          [
+              _Ty=std::string
+          ]
+  
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\memory(3597,56): warning C4244: 'argument': conversion from '_Ty' to 'float', possible loss of data
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\memory(3597,56): warning C4244:         with
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\memory(3597,56): warning C4244:         [
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\memory(3597,56): warning C4244:             _Ty=double
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\memory(3597,56): warning C4244:         ]
+  (compiling source file 'Store.cpp')
+  
+  Store.vcxproj -> C:\Projects\Store\x64\Debug\Store.exe

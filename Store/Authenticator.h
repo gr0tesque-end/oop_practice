@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Db.h"
+#include "Logger.h"
 
 class Authenticator
 {

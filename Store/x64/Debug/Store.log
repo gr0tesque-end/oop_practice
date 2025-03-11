@@ -20,5 +20,5 @@ C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.3443
 C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\memory(3597,56): warning C4244:         ]
   (compiling source file 'Store.cpp')
   
-C:\Projects\Store\Store\CLI.h(89,1): warning C4717: 'CLI::MenuCustomer': recursive on all control paths, function will cause runtime stack overflow
+C:\Projects\Store\Store\Db.h(89,1): warning C4715: 'Db::SearchProduct': not all control paths return a value
   Store.vcxproj -> C:\Projects\Store\x64\Debug\Store.exe

@@ -94,8 +94,8 @@ public:
 
 		return true;
 	}
-	virtual bool Buy(Product& prod) {
-		float p = prod.GetPrice();
+	virtual bool Buy(Product& prod, int quantity) {
+		float p = prod.GetPrice() * quantity;
 		if (p > _balance) { std::cerr << "Insufficient funds\n"; return false; }
 		_balance -= p;
 
@@ -108,6 +108,10 @@ public:
 		_PurchaseHistory[_index++] = p;
 
 		return true;
+	}
+
+	void ChangeBalance(float count) {
+		_balance += count;
 	}
 
 	virtual const int GetId() const override { return 1000 + id; }

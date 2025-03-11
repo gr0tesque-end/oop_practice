@@ -25,7 +25,7 @@ class Db final
 		while (!rawData.empty()) {
 			auto range = findAndRemoveRange(rawData, "Object");
 			auto obj = generateObject(range);
-			
+
 			if (auto* item = dynamic_cast<Product*>(obj.get())) {
 				Products.push_back(item);
 			}
@@ -41,7 +41,7 @@ class Db final
 			else {
 				std::cerr << "Unknown object type!\n";
 			}
-			
+
 			GlobalList.push_back(dynamic_cast<IIdentifiable*>(obj.release()));
 		}
 	}
@@ -58,9 +58,9 @@ public:
 
 	Db(Db& other) = delete;
 	Db(Db&& other) = delete;
-	
+
 	void operator=(const Db&) = delete;
-	
+
 	static Db* GetInstance(const std::string& file = "Data/db.json") {
 		if (db == nullptr) {
 			db = new Db(file);
@@ -69,15 +69,23 @@ public:
 	}
 
 	void Flush() const {
-		for (IObject* obj: GlobalList)
+		for (IObject* obj : GlobalList)
 		{
 			Serializer::Serialize(*obj, files[0]);
 		}
 	}
 
-	template<isStoredInDb T>
+	/*template<isStoredInDb T>
 	T* Find(int id) {
+		for (auto p : GlobalList) {
+			if (p->GetId() == id) return dynamic_cast<T*>(p);
+		}
+	}*/
 
+	Product* SearchProduct(int id) {
+		for (auto p : Products) {
+			if (p->GetId() == id) return p;
+		}
 	}
 };
 

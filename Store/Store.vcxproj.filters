@@ -5,28 +5,24 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="Interfaces">
       <UniqueIdentifier>{219dc2ad-348e-42ce-9c9a-b21f72f4ca43}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Db_Storables">
+      <UniqueIdentifier>{3e8f72c7-d29d-4a1d-b309-bc8097b2d6ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tools">
+      <UniqueIdentifier>{9d9742f7-799f-465d-8c38-3fcb02008706}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Not_Used">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Global_Entities">
+      <UniqueIdentifier>{0f29b13c-f653-4b23-a057-09f9376e52ea}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Product.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Employee.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Customer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="IIdentifiable.h">
       <Filter>Interfaces</Filter>
     </ClInclude>
@@ -36,38 +32,50 @@
     <ClInclude Include="IObject.h">
       <Filter>Interfaces</Filter>
     </ClInclude>
-    <ClInclude Include="Log.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Misc.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="CLI_old.txt">
+      <Filter>Not_Used</Filter>
     </ClInclude>
     <ClInclude Include="SubscribedCustomer.h">
-      <Filter>Header Files</Filter>
+      <Filter>Db_Storables</Filter>
+    </ClInclude>
+    <ClInclude Include="Product.h">
+      <Filter>Db_Storables</Filter>
+    </ClInclude>
+    <ClInclude Include="Log.h">
+      <Filter>Db_Storables</Filter>
+    </ClInclude>
+    <ClInclude Include="Employee.h">
+      <Filter>Db_Storables</Filter>
+    </ClInclude>
+    <ClInclude Include="Customer.h">
+      <Filter>Db_Storables</Filter>
     </ClInclude>
     <ClInclude Include="Regex-PresudoJSONParser.h">
-      <Filter>Header Files</Filter>
+      <Filter>Tools</Filter>
     </ClInclude>
     <ClInclude Include="ObjectFactory.h">
-      <Filter>Header Files</Filter>
+      <Filter>Tools</Filter>
     </ClInclude>
-    <ClInclude Include="Db.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CLI_old.txt">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Account.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Misc.h">
+      <Filter>Tools</Filter>
     </ClInclude>
     <ClInclude Include="Authenticator.h">
-      <Filter>Header Files</Filter>
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Account.h">
+      <Filter>Global_Entities</Filter>
     </ClInclude>
     <ClInclude Include="CLI.h">
-      <Filter>Header Files</Filter>
+      <Filter>Global_Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Db.h">
+      <Filter>Global_Entities</Filter>
     </ClInclude>
     <ClInclude Include="Store.h">
-      <Filter>Header Files</Filter>
+      <Filter>Global_Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Logger.h">
+      <Filter>Tools</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -75,7 +83,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="CLI (Latest).txt">
-      <Filter>Header Files</Filter>
+      <Filter>Not_Used</Filter>
     </Text>
   </ItemGroup>
   <ItemGroup>

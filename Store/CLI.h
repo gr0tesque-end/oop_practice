@@ -12,10 +12,12 @@
 
 class CLI;
 
+const char* Message_Success = "Msg > Success";
+
 template <typename T>
 concept IsAuthorisedClass =
-	std::is_same_v<T, CLI> ||
-	std::is_same_v<T, Store>;
+std::is_same_v<T, CLI> ||
+std::is_same_v<T, Store>;
 
 template<IsAuthorisedClass AC>
 using ProcessingAction = std::function<void(AC&, const std::vector<std::string>&)>;
@@ -25,9 +27,9 @@ private:
 	std::shared_ptr<Account> _LogIn(const std::string& name, const std::string& pass) {
 		return std::shared_ptr<Account>(Authenticator::VerifyLogin(name, pass));
 	}
+
 public:
 	using Action = std::function<void(CLI&)>;
-
 
 	Action dc;
 	Store store{};
@@ -41,101 +43,143 @@ public:
 
 	void Start() {
 		dc = std::mem_fn(&CLI::Start);
-		std::cout << "[Start]" << std::endl
-			<< "Msg > Welcome to <Store>" << std::endl;
+		while (true) {
 
-		int i1 = optionInput({ "LogIn", "SignUp", "Exit" });
+			acc_customer = nullptr;
+			acc_employee = nullptr;
 
-		// Auth
-		if (i1 == 1) manualInput<CLI>({ "User", "Password" }, std::mem_fn(&CLI::LogIn));
-		else if (i1 == 2) manualInput<CLI>({ "User", "Password", "Confirm Password" }, std::mem_fn(&CLI::SignUp));
-		else return;
+			std::cout << "[Start]" << std::endl
+				<< "Msg > Welcome to <Store>" << std::endl;
 
-		if (acc) std::cout << "Msg > Success" << std::endl;
-		system("cls");
-		if (acc_employee) MenuEmployee();
-		else if (acc_customer) MenuCustomer();
+			int i1 = optionInput({ "LogIn", "SignUp", "Exit" });
+
+			if (i1 == 1) {
+				manualInput<CLI>({ "User", "Password" }, std::mem_fn(&CLI::LogIn));
+			}
+			else if (i1 == 2) {
+				manualInput<CLI>({ "User", "Password", "Confirm Password" }, std::mem_fn(&CLI::SignUp));
+			}
+			else {
+				return;
+			}
+
+			if (acc) {
+				std::cout << Message_Success << std::endl;
+				system("cls");
+				if (acc_employee) {
+					//store.employee = acc_employee;
+					MenuEmployee();
+				}
+				else if (acc_customer) {
+					//store.customer = acc_customer;
+					MenuCustomer();
+				}
+			}
+		}
 	}
 
 	void MenuCustomer() {
-
 		dc = std::mem_fn(&CLI::MenuCustomer);
-		std::cout << "[Menu]" << std::endl
-			<< "Msg > Welcome, " << acc->GetName() << std::endl << "Balance > " << acc_customer->GetBalance() << std::endl;
-		int i1 = optionInput({
-			"Catalog of products",  // 1
-			"Buy a product",		// 2
-			"Deposit",				// 3
-			"History",				// 4 
-			});
+		while (true) {
 
-		switch (i1)
-		{
-		case 1:
-		{
-			std::cout << store.Catalog().str();
-			break;
+			std::cout << "[Menu]" << std::endl
+				<< "Msg > Welcome, " << acc->GetName() << std::endl
+				<< "Balance > " << acc_customer->GetBalance() << std::endl;
+			int i1 = optionInput({
+				"Catalog of products",  // 1 # Implemented
+				"Buy a product",        // 2 # Implemented
+				"Deposit",              // 3 # Implemented
+				"History",              // 4 # Need Logging
+				"Refund Req"			// 5 # Need Logging
+				});
+
+			switch (i1) {
+			case 1:
+				std::cout << store.Catalog().str();
+				break;
+			case 2:
+			{
+				store.BindCustomer(acc_customer);
+				manualInput<Store>({ "Product_Id", "Quantity" }, std::mem_fn(&Store::Purchase));
+				store.UnbindCustomer();
+
+				if (store.LatestReq) std::cout << Message_Success << std::endl;
+
+				// Log here
+
+				break;
+			}
+			case 3:
+				store.BindCustomer(acc_customer);
+				manualInput<Store>({ "Amount" }, std::mem_fn(&Store::Deposit));
+				store.UnbindCustomer();
+
+				// Log here
+
+				break;
+			default:
+				return;
+			}
 		}
-		case 2:
-		{
-			manualInput<Store>({ "Product_Id", "Quantity" }, std::mem_fn(&Store::Purchase));
-			break;
-		}
-		default:
-			Start();
-			break;
-		}
-		MenuCustomer();
 	}
 
 	void MenuEmployee() {
-		system("cls");
 		dc = std::mem_fn(&CLI::MenuEmployee);
-		std::cout << "[Start]" << std::endl
-			<< "Msg > Welcome, " << acc->GetName() << " [Employee]" << std::endl;
-		int i1 = optionInput({
-			"Modify Account(s)",
-			"Modify Product(s)"
-			"See Logs",
-			"See Products",
-			"See Accounts"
-			});
-
-		switch (i1)
+		while (true)
 		{
-		case 1:
+			std::cout << "[Start]" << std::endl
+				<< "Msg > Welcome, " << acc->GetName()
+				<< " [Employee]" << std::endl;
+			int i1 = optionInput({
+				"Modify Account(s)",
+				"Modify Product(s)"
+				"See Logs",
+				"See Products",
+				"See Accounts"
+				});
 
-		default:
-			Start();
-			break;
+			switch (i1)
+			{
+			case 1:
+
+			default:
+				return;
+			}
 		}
 	}
 
 	int optionInput(std::vector<std::string> options) {
-		for (int i{ 0 }; i < options.size(); ++i) {
-			std::cout << i + 1 << ". " << options[i] << std::endl;
-		}
-		std::string choice;
-		std::cout << "(.q to cancel) > ";
-		std::getline(std::cin, choice);
+		while (true) {
+			for (int i{ 0 }; i < options.size(); ++i) {
+				std::cout << i + 1 << ". " << options[i] << std::endl;
+			}
+			std::string choice;
+			std::cout << "(.q to cancel) > ";
+			std::getline(std::cin, choice);
 
-		if (choice.starts_with(".q")) {
-			return -1;
-		}
+			if (choice.starts_with(".q")) {
+				return -1;
+			}
 
-		int c = std::stoi(choice);
-
-		if (c > 0 && c <= options.size()) {
-			return c;
-		}
-		else {
-			std::cout << "Msg > Invalid choice. Try again.\n";
-			return optionInput(options);
+			try {
+				int c = std::stoi(choice);
+				if (c > 0 && c <= options.size()) {
+					return c;
+				}
+				else {
+					std::cout << "Msg > Invalid choice. Try again.\n";
+				}
+			}
+			catch (std::invalid_argument&) {
+				std::cout << "Msg > Invalid input. Please enter a number.\n";
+			}
 		}
 	}
 
 	template<IsAuthorisedClass T>
-	void manualInput(std::vector<std::string> inputParams, ProcessingAction<T> nextCall) {
+	void manualInput(std::vector<std::string> inputParams,
+		ProcessingAction<T> nextCall) {
+
 		int i{};
 		for (const auto& o : inputParams) {
 			std::string loc;
@@ -150,19 +194,29 @@ public:
 			++i;
 		}
 
-		if constexpr (std::is_same_v<T, CLI>) { nextCall(*this, inputParams); }
-		else { nextCall(store, inputParams); }
+		/*if (!additionalData.empty()) {
+			inputParams.insert(inputParams.end(), additionalData.begin(), additionalData.end());
+		}*/
+		if constexpr (std::is_same_v<T, CLI>) {
+			nextCall(*this, inputParams);
+		}
+		else {
+			nextCall(store, inputParams);
+		}
 	}
 
 	void LogIn(const std::vector<std::string>& data) {
 		acc = _LogIn(data[0], data[1]);
 		if (!acc) {
 			std::cout << "Msg > Login failed. Try again.\n";
-			manualInput<CLI>({ "User", "Password" }, std::mem_fn(&CLI::LogIn));
 		}
 		else {
-			if (acc->GetAuthority() >= AuthorityEmployeeThreshhold) acc_employee = dynamic_pointer_cast<Employee, Account>(acc);
-			else acc_customer = dynamic_pointer_cast<Customer, Account>(acc);
+			if (acc->GetAuthority() >= AuthorityEmployeeThreshhold) {
+				acc_employee = dynamic_pointer_cast<Employee, Account>(acc);
+			}
+			else {
+				acc_customer = dynamic_pointer_cast<Customer, Account>(acc);
+			}
 		}
 	}
 

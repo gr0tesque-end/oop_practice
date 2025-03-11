@@ -14,7 +14,7 @@ public:
 	}
 	
 	void SetPassword(std::string newPass, const Account& changer) {
-		if (password.empty() || changer.Authority >= 100) {
+		if (password.empty() || changer.Authority >= AuthorityEmployeeThreshhold) {
 			password = newPass;
 			std::cout << "Success. [passchange]\n";
 		}
@@ -31,7 +31,7 @@ public:
 	}
 
 	void SetAuthority(int newAuthority, const Account& changer) {
-		if (changer.Authority >= 100) {
+		if (changer.Authority >= AuthorityEmployeeThreshhold) {
 			Authority = newAuthority;
 			std::cout << "Success. [authoritychange]\n";
 		}

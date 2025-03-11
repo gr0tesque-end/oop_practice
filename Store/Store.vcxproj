@@ -149,6 +149,7 @@
     <ClInclude Include="ObjectFactory.h" />
     <ClInclude Include="Product.h" />
     <ClInclude Include="Regex-PresudoJSONParser.h" />
+    <ClInclude Include="Store.h" />
     <ClInclude Include="SubscribedCustomer.h" />
   </ItemGroup>
   <ItemGroup>

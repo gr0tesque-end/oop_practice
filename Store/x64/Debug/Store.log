@@ -2,12 +2,6 @@
 C:\Projects\Store\Store\ObjectFactory.h(74,16): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Store.cpp')
   
-C:\Projects\Store\Store\CLI.h(34,8): warning C4834: discarding return value of function with [[nodiscard]] attribute
-  (compiling source file 'Store.cpp')
-  
-C:\Projects\Store\Store\CLI.h(52,8): warning C4834: discarding return value of function with [[nodiscard]] attribute
-  (compiling source file 'Store.cpp')
-  
 C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\memory(3597,56): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
   (compiling source file 'Store.cpp')
       C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\memory(3597,56):
@@ -26,4 +20,5 @@ C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.3443
 C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\memory(3597,56): warning C4244:         ]
   (compiling source file 'Store.cpp')
   
+C:\Projects\Store\Store\CLI.h(89,1): warning C4717: 'CLI::MenuCustomer': recursive on all control paths, function will cause runtime stack overflow
   Store.vcxproj -> C:\Projects\Store\x64\Debug\Store.exe

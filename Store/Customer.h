@@ -78,6 +78,8 @@ public:
 		std::cout << "~Customer\n";
 	}
 
+	float GetBalance() const { return this->_balance; }
+
 	virtual bool Buy(const float& price) {
 		if (price > _balance) { std::cerr << "Insufficient funds\n"; return false; }
 		_balance -= price;

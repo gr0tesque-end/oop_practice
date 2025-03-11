@@ -2,7 +2,8 @@
 #include <string>
 #include <ostream>
 #include <sstream>
-#include <regex>
+
+const int AuthorityEmployeeThreshhold{ 100 };
 
 // 5.8
 class IObject

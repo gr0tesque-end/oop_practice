@@ -10,6 +10,11 @@
 
 const unsigned int FileCount{ 2 };
 
+class Db;
+
+template<typename T>
+concept isStoredInDb = std::is_base_of_v<IIdentifiable, T>;
+
 class Db final
 {
 	Db(const std::string& file)
@@ -37,16 +42,15 @@ class Db final
 				std::cerr << "Unknown object type!\n";
 			}
 			
-			GlobalList.push_back(obj.release());
+			GlobalList.push_back(dynamic_cast<IIdentifiable*>(obj.release()));
 		}
 	}
 	static Db* db;
 
 public:
-	std::shared_ptr<Account> acc;
 	std::string files[FileCount]{};
 
-	std::list<IObject*> GlobalList{};
+	std::list<IIdentifiable*> GlobalList{};
 	std::list<Employee*> Employees{};
 	std::list<Customer*> Customers{};
 	std::list<Product*> Products{};
@@ -69,6 +73,11 @@ public:
 		{
 			Serializer::Serialize(*obj, files[0]);
 		}
+	}
+
+	template<isStoredInDb T>
+	T* Find(int id) {
+
 	}
 };
 

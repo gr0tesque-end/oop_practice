@@ -136,7 +136,6 @@
   <ItemGroup>
     <ClInclude Include="Account.h" />
     <ClInclude Include="Authenticator.h" />
-    <ClInclude Include="CLI_old.txt" />
     <ClInclude Include="CLI.h" />
     <ClInclude Include="Customer.h" />
     <ClInclude Include="Db.h" />
@@ -151,11 +150,9 @@
     <ClInclude Include="Product.h" />
     <ClInclude Include="Regex-PresudoJSONParser.h" />
     <ClInclude Include="Store.h" />
-    <ClInclude Include="SubscribedCustomer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
-    <Text Include="CLI (Latest).txt" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Store.cpp" />

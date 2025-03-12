@@ -1,32 +1,106 @@
 ﻿#pragma once
 #include <string>
 #include <list>
-#include "Employee.h"
-#include "Log.h"
 #include "Regex-PresudoJSONParser.h"
-#include "Product.h"
-#include "SubscribedCustomer.h"
 #include "ObjectFactory.h"
 
-const unsigned int FileCount{ 2 };
+const unsigned int FileCount{ 4 };
 
 class Db;
 
 template<typename T>
-concept isStoredInDb = std::is_base_of_v<IIdentifiable, T>;
+concept DbStorable = std::is_base_of_v<IIdentifiable, T>;
+
+enum Objs {
+	Logs = 0,
+	Employees = 1,
+	Products = 2,
+	Customers = 3
+};
 
 class Db final
 {
-	Db(const std::string& file)
+	/*template<DbStorable T>
+	static std::shared_ptr<T> GenerateObject(const std::list<std::pair<std::string, std::string>>* obj)
 	{
-		files[0] = file;
-		auto rawData = Deserializer::Deserialize(file);
+		IIdentifiable* obj = generateObject(*obj);
+		return std::make_shared<T>(dynamic_cast<T*>(obj));
+	}*/
 
-		while (!rawData.empty()) {
-			auto range = findAndRemoveRange(rawData, "Object");
-			auto obj = generateObject(range);
+	template<DbStorable T>
+	std::list<std::shared_ptr<T>>& GetContainer() {
+		if constexpr (std::is_same_v<T, Log>) {
+			return Logs;
+		}
+		else if constexpr (std::is_same_v<T, Employee>)
+		{
+			return Employees;
+		}
+		else if constexpr (std::is_same_v<T, Product>) {
+			return Products;
+		}
+		else if constexpr (std::is_same_v<T, Customer>)
+		{
+			return Customers;
+		}
+	}
 
-			if (auto* item = dynamic_cast<Product*>(obj.get())) {
+	template<DbStorable T>
+	int GetIndex() {
+		if constexpr (std::is_same_v<T, Log>) {
+			return 0;
+		}
+		else if constexpr (std::is_same_v<T, Employee>)
+		{
+			return 1;
+		}
+		else if constexpr (std::is_same_v<T, Product>) {
+			return 2;
+		}
+		else if constexpr (std::is_same_v<T, Customer>)
+		{
+			return 3;
+		}
+	}
+
+	// Logs > Employees > Products > Customers
+	Db(const std::vector<std::string> files)
+	{
+		LatestIds.resize(FileCount);
+
+		for (int i{}; i < FileCount; ++i) {
+			this->files[i] = files[i];
+
+			auto rawData = Deserializer::Deserialize(this->files[i]);
+
+			while (!rawData.empty()) {
+				auto range = findAndRemoveRange(rawData, "Object");
+
+				auto obj = generateObject(range).release();
+
+				switch (i)
+				{
+				case 0: 
+					Logs.push_back(std::shared_ptr<Log>(dynamic_cast<Log*>(obj)));
+					break;
+				case 1:
+					Employees.push_back(std::shared_ptr<Employee>(dynamic_cast<Employee*>(obj)));
+					break;
+				case 2:
+					Products.push_back(std::shared_ptr<Product>(dynamic_cast<Product*>(obj)));
+					break;
+				case 3:
+					Customers.push_back(std::shared_ptr<Customer>(dynamic_cast<Customer*>(obj)));
+					break;
+				default:
+					break;
+				}
+				int id = atoi(range.begin()._Ptr->_Next->_Myval.second.c_str());
+				LatestIds[i] = id;
+			}
+		}
+
+			/*if (auto* item = dynamic_cast<Product*>(obj.get())) {
 				Products.push_back(item);
 			}
 			else if (auto* item = dynamic_cast<Log*>(obj.get())) {
@@ -40,38 +114,75 @@ class Db final
 			}
 			else {
 				std::cerr << "Unknown object type!\n";
-			}
+			}*/
 
-			GlobalList.push_back(dynamic_cast<IIdentifiable*>(obj.release()));
-		}
+			//GlobalList.push_back(&Employees);
+		
 	}
 	static Db* db;
 
+	std::list<std::shared_ptr<Employee>> Employees{};
+	std::list<std::shared_ptr<Customer>> Customers{};
+	std::list<std::shared_ptr<Product>> Products{};
+	std::list<std::shared_ptr<Log>> Logs{};
+
+	std::vector<int> LatestIds{};
 public:
 	std::string files[FileCount]{};
 
-	std::list<IIdentifiable*> GlobalList{};
-	std::list<Employee*> Employees{};
-	std::list<Customer*> Customers{};
-	std::list<Product*> Products{};
-	std::list<Log*> Logs{};
+	template<DbStorable T>
+	Db* push_back(std::shared_ptr<T> obj) {
+
+		if constexpr (std::is_same_v<T, Log>) {
+			if (obj->id < 0) obj->id = ++LatestIds[0];
+			Logs.push_back(obj);
+		}
+		else if constexpr (std::is_same_v<T, Employee>)
+		{
+			if (obj->id < 0) obj->id = ++LatestIds[1];
+			Employees.push_back(obj);
+		}
+		else if constexpr (std::is_same_v<T, Product>) {
+			if (obj->id < 0) obj->id = ++LatestIds[2];
+			Products.push_back(obj);
+		}
+		else if constexpr (std::is_same_v<T, Customer>)
+		{
+			if (obj->id < 0) obj->id = ++LatestIds[3];
+			Customers.push_back(obj);
+		}
+		return this;
+	}
 
 	Db(Db& other) = delete;
 	Db(Db&& other) = delete;
 
 	void operator=(const Db&) = delete;
 
-	static Db* GetInstance(const std::string& file = "Data/db.json") {
+	static Db* GetInstance(const std::vector<std::string> files = {
+							"Data/Logs.json",
+							"Data/Employees.json",
+							"Data/Products.json",
+							"Data/Customers.json" })
+	{
 		if (db == nullptr) {
-			db = new Db(file);
+			db = new Db(files);
 		}
 		return db;
 	}
 
-	void Flush() const {
-		for (IObject* obj : GlobalList)
+	// Sorts by Id before flush
+	template<DbStorable T>
+	void Flush() {
+		auto& cont = GetContainer<T>();
+		cont.sort([](const std::shared_ptr<T>& a, const std::shared_ptr<T>& b) {
+			return a->GetId() < b->GetId();
+			});
+		Serializer::Serialize(*cont.front(), files[GetIndex<T>()], std::ios::out);
+		for (int i{}; auto& o: cont)
 		{
-			Serializer::Serialize(*obj, files[0]);
+			if (i++ == 0) continue;
+			Serializer::Serialize(*o, files[GetIndex<T>()], std::ios::app);
 		}
 	}
 
@@ -82,11 +193,15 @@ public:
 		}
 	}*/
 
-	Product* SearchProduct(int id) {
+	std::shared_ptr<Product> SearchProduct(int id) {
 		for (auto p : Products) {
 			if (p->GetId() == id) return p;
 		}
+		return nullptr;
 	}
+
+	friend class Authenticator;
+	friend class Store;
 };
 
 Db* Db::db = nullptr;

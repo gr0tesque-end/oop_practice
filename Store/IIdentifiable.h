@@ -6,24 +6,18 @@
 class IIdentifiable
 	: virtual public IObject
 {
-private:
-	static int Id;
 protected:
 	int id;
 public:
 	IIdentifiable(int id) : id{ id } {}
-	IIdentifiable() : id{ Id } { ++Id; }
+	IIdentifiable() : id{ -1 } {}
 	IIdentifiable(IIdentifiable&& idObj) noexcept
-		: id{ idObj.id } {}
+		: id{ idObj.id } {
+		idObj.id = -1;
+	}
 
 	virtual const int GetId() const { return id; }
-	
-	virtual std::stringstream ToString() const override {
-			std::stringstream ss;
 
-			ss << "\n{\n\tObject: \"" << "<unidentified>" << "\",\n"
-				<< "\tId: \"" << GetId() << "\"\n" << '}';
-			return ss;
-	}
+	friend class Db;
 };
 

@@ -7,11 +7,17 @@
 #include <fstream>
 #include "IObject.h"
 
+// current kvpa = ^\s*"(\w+\(?s?\)?)": "\[?([^\n\r\t\0)]*)\]?"
+
 const std::string kvp{ "^\\s+(\\w+): \"(.*)\"" };
 const std::string kvpl{ R"(^\s+(\w+\(s\)): "\[ (.*) \]")" };
-const std::string kvpa{ R"(^\s*(\w+\(?s?\)?): "\[?\s*([\w\.\-\,]*(?:\s+[\w\.\-\,]+)*)\s*\]?")"
+const std::string kvpa{ "^\\s*\"(\\w+\\(?s?\\)?)\": \"\\[?([^\\n\\r\\t\\0)]*)\\]?\""
+    /*"^\\s*\"(\\w+\\(?s?\\)?)\": \"\\[?\\s*([\\w\\.\\-\\,]*(?:\\s+[\\w\\.\\-\\,]+)*)\\s*\\]?\""*/
     /*"^\\s+(\\w+\\(?s?\\)?): \"(.*)\""*/ };
 
+// ((?<=")([^(",")]*)(?=")) to extract elements of list<string>
+
+// kvpa raw = ^\s*"(\w+\(?s?\)?)": "\[?\s*"?([\w\.\-\,>]*(?:\s+[\w\.\-\,>]+)*)"?\s*\]?"
 
 std::list<std::pair<std::string, std::string>> extractKeyValuePairs(
     const std::string& input,
@@ -81,8 +87,8 @@ std::list<std::pair<std::string, std::string>> findAndRemoveRange(
 
 class Serializer {
 public:
-    static void Serialize(const IObject& obj, const std::string& filename) {
-        std::ofstream file(filename);
+    static void Serialize(const IObject& obj, const std::string& filename, std::ios_base::openmode mode) {
+        std::ofstream file(filename, mode);
         if (file.is_open()) {
             file << obj.ToString().str();
             file.close();

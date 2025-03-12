@@ -2,7 +2,7 @@
 #include <string>
 #include <iostream>
 #include <sstream>
-#include "INameable.h"
+#include "Account.h"
 #include "IIdentifiable.h"
 
 class Product
@@ -28,6 +28,10 @@ public:
 	Product(int id, const std::string& name, float price, int quantity)
 		: _price{ price }, INameable(name), _quantity{ quantity } {
 		this->id = id;
+	}
+
+	Product(const std::string& id, const std::string& name, const std::string& price, const std::string& quantity)
+		: Product{ atoi(id.c_str()), name, static_cast<float>(atof(price.c_str())), atoi(quantity.c_str()) } {
 	}
 #pragma region Setters
 	void Rename(const std::string& name) {
@@ -55,7 +59,7 @@ public:
 
 	bool IsInStock() const { return _quantity > 0; }
 
-	virtual const int GetId() const override { return id + 10000; }
+	virtual const int GetId() const override { return id; }
 
 	// 3.6
 	Product& operator++(int) {
@@ -71,11 +75,11 @@ public:
 	virtual std::stringstream ToString() const override {
 		std::stringstream ss;
 
-		ss << "\n{\n\tObject: \"" << "Product" << "\",\n"
-			<< "\tId: \"" << GetId() << "\",\n"
-			<< "\tName: \"" << Name << "\",\n"
-			<< "\tPrice: \"" << _price << "\",\n"
-			<< "\tQuantity: \"" << _quantity << "\"\n" << "}";
+		ss << "\n{\n\t\"Object\": \"" << "Product" << "\",\n"
+			<< "\t\"Id\": \"" << GetId() << "\",\n"
+			<< "\t\"Name\": \"" << Name << "\",\n"
+			<< "\t\"Price\": \"" << _price << "\",\n"
+			<< "\t\"Quantity\": \"" << _quantity << "\"\n" << "},";
 		return ss;
 	};
 };

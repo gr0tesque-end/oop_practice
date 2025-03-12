@@ -12,8 +12,6 @@
 
 class CLI;
 
-const char* Message_Success = "Msg > Success";
-
 template <typename T>
 concept IsAuthorisedClass =
 std::is_same_v<T, CLI> ||
@@ -25,7 +23,7 @@ using ProcessingAction = std::function<void(AC&, const std::vector<std::string>&
 class CLI {
 private:
 	std::shared_ptr<Account> _LogIn(const std::string& name, const std::string& pass) {
-		return std::shared_ptr<Account>(Authenticator::VerifyLogin(name, pass));
+		return Authenticator::VerifyLogin(name, pass);
 	}
 
 public:
@@ -56,6 +54,8 @@ public:
 			else if (i1 == 2) {
 				manualInput<CLI>({ "User", "Password", "Confirm Password" }, std::mem_fn(&CLI::SignUp));
 			}
+			else if (i1 == 0)
+				continue;
 			else {
 				return;
 			}
@@ -90,6 +90,9 @@ public:
 				});
 
 			switch (i1) {
+			case 0:
+				continue;
+				break;
 			case 1:
 				std::cout << store.Catalog().str();
 				break;
@@ -109,8 +112,6 @@ public:
 				manualInput<Store>({ "Amount" }, std::mem_fn(&Store::Deposit));
 				store.UnbindCustomer();
 
-				// Log here
-
 				break;
 			default:
 				return;
@@ -126,16 +127,53 @@ public:
 				<< " [Employee]" << std::endl;
 			int i1 = optionInput({
 				"Modify Account(s)",
-				"Modify Product(s)"
+				"Modify Product(s)", // # 1/4
 				"See Logs",
-				"See Products",
 				"See Accounts"
 				});
 
 			switch (i1)
 			{
+			case 0:
+				continue;
+				break;
 			case 1:
+				break;
+			case 2:
+				MenuEmployee_Products();
+				break;
+			default:
+				return;
+			}
+		}
+	}
 
+	void MenuEmployee_Products() {
+		system("cls");
+		while (true)
+		{
+			std::cout << "[Products]" << std::endl;
+			int i1 = optionInput({
+				"Modify Product(s)",
+				"Create Product",    // # Implemented /w logging 
+				"See Products",
+				"See refund requests"
+				});
+
+			switch (i1)
+			{
+			case 0:
+				continue;
+				break;
+			case 1:
+				break;
+			case 2:
+				store.BindEmployee(acc_employee);
+				manualInput<Store>({
+					"Name", "Price", "Stock"
+					}, std::mem_fn(&Store::CreateProduct));
+				store.UnbindEmployee();
+				break;
 			default:
 				return;
 			}
@@ -153,6 +191,11 @@ public:
 
 			if (choice.starts_with(".q")) {
 				return -1;
+			}
+
+			if (choice.starts_with("clear")) {
+				system("cls");
+				return 0;
 			}
 
 			try {
@@ -247,23 +290,26 @@ public:
 				if (temp->GetAuthority() >= AuthorityEmployeeThreshhold) {
 					int newAuth = atoi(match[7].str().c_str());
 					if (newAuth >= AuthorityEmployeeThreshhold) {
-						acc = std::make_shared<Employee>(-1, match[1].str(), 0.f, newAuth, data[1]);
-						acc_employee = dynamic_pointer_cast<Employee, Account>(acc);
-						store.db->Employees.push_back(acc_employee.get());
+						acc_employee = std::make_shared<Employee>(-1, match[1].str(), 0.f, newAuth, data[1]);
+						acc = acc_employee;
+						store.db->push_back(acc_employee);
+						store.db->Flush<Employee>();
 					}
 					else {
-						acc = std::make_shared<Customer>(-1, match[1].str(), 0.f, nullptr, 0, newAuth, data[1]);
-						acc_customer = dynamic_pointer_cast<Customer, Account>(acc);
-						store.db->Customers.push_back(acc_customer.get());
+						acc_customer = std::make_shared<Customer>(-1, match[1].str(), 0.f, newAuth, data[1]);
+						acc = acc_customer;
+						store.db->push_back(acc_customer);
+						store.db->Flush<Customer>();
 					}
 				}
 			}
 			// [Expand here]
 		}
 		if (match.size() >= 1) {
-			if (!acc) {
-				acc = std::make_shared<Customer>(-1, match[1].str(), 0.f, nullptr, 0, 0, data[1]);
-				store.db->Customers.push_back(dynamic_cast<Customer*>(acc.get()));
+			if (!acc_customer) {
+				acc_customer = std::make_shared<Customer>(-1, match[1].str(), 0.f, 0, data[1]);
+				store.db->push_back(acc_customer);
+				store.db->Flush<Customer>();
 			}
 		}
 	}

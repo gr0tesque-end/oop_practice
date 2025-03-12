@@ -32,12 +32,6 @@
     <ClInclude Include="IObject.h">
       <Filter>Interfaces</Filter>
     </ClInclude>
-    <ClInclude Include="CLI_old.txt">
-      <Filter>Not_Used</Filter>
-    </ClInclude>
-    <ClInclude Include="SubscribedCustomer.h">
-      <Filter>Db_Storables</Filter>
-    </ClInclude>
     <ClInclude Include="Product.h">
       <Filter>Db_Storables</Filter>
     </ClInclude>
@@ -80,11 +74,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="CLI (Latest).txt">
-      <Filter>Not_Used</Filter>
-    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Store.cpp">

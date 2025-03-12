@@ -1,0 +1,17 @@
+
+{
+	"Object": "Customer",
+	"Id": "-1",
+	"Name": "John",
+	"Balance": "0",
+	"Authority": "0",
+	"Pass": "j123"
+},
+{
+	"Object": "Customer",
+	"Id": "0",
+	"Name": "Admin",
+	"Balance": "0",
+	"Authority": "0",
+	"Pass": "admi"
+},

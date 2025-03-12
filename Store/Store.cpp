@@ -4,16 +4,13 @@
 
 using namespace std;
 
-int IIdentifiable::Id = 0;
-
 int main() {
 	RegisterClasses();
 
-	Db* db{ Db::GetInstance("Data/db.json") };
-
+	Db* db{ Db::GetInstance() };
+	
 	CLI cli{};
 
-	//db->Flush();
 	return 0;
 }
 

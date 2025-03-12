@@ -45,9 +45,9 @@ public:
 	virtual std::stringstream ToString() const override {
 		std::stringstream ss;
 
-		ss << "\n{\n\tObject: \"" << "Account" << "\",\n"
-			<< "\tName: \"" << Name << "\",\n"
-			<< "\tAuthority: \"" << this->Authority << "\"\n" << "}";
+		ss << "\n{\n\t\"Object\": \"" << "Account" << "\",\n"
+			<< "\t\"Name\": \"" << Name << "\",\n"
+			<< "\t\"Authority\": \"" << this->Authority << "\"\n" << "}";
 		return ss;
 	}
 

@@ -1,0 +1,17 @@
+
+{
+	"Object": "Log",
+	"Id": "1",
+	"Action": "2",
+	"Arg(s)": "[ "Msg > Success","aboba","qgqgq","qfqf q " ]",
+	"Description": "Create new Product",
+	"Executioner": "1"
+},
+{
+	"Object": "Log",
+	"Id": "2",
+	"Action": "2",
+	"Arg(s)": "[ "Msg > Success" ]",
+	"Description": "Create new Product",
+	"Executioner": "-1"
+},

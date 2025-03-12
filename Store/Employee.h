@@ -15,6 +15,15 @@ public:
 		if (id < 0) return;
 		this->id = id;
 	}
+
+	Employee(const std::string& id,
+		const std::string& name,
+		const std::string& sales,
+		const std::string& Authority,
+		const std::string& pass)
+		: Employee{ atoi(id.c_str()), name, static_cast<float>(atof(sales.c_str())), atoi(Authority.c_str()), pass } {
+	}
+
 	Employee(const Employee& emp)
 		: Account{ emp }, _sales{ emp._sales } { }
 
@@ -24,7 +33,7 @@ public:
 		return *this;
 	}
 
-	virtual const int GetId() const override { return 100 + id; }
+	virtual const int GetId() const override { return id; }
 
 	const float GetSales() const { return _sales; }
 
@@ -33,12 +42,12 @@ public:
 	virtual std::stringstream ToString() const override {
 		std::stringstream ss;
 
-		ss  << "\n{\n\tObject: \"" << "Employee" << "\",\n"
-			<< "\tId: \"" << GetId() << "\",\n"
-			<< "\tName: \"" << Name << "\",\n"
-			<< "\tSales: \"" << _sales << "\",\n"
-			<< "\tAuthority: \"" << this->Authority << "\",\n"
-			<< "\tPass: \"" << this->password << "\"\n" << "}";
+		ss  << "\n{\n\t\"Object\": \"" << "Employee" << "\",\n"
+			<< "\t\"Id\": \"" << GetId() << "\",\n"
+			<< "\t\"Name\": \"" << Name << "\",\n"
+			<< "\t\"Sales\": \"" << _sales << "\",\n"
+			<< "\t\"Authority\": \"" << this->Authority << "\",\n"
+			<< "\t\"Pass\": \"" << this->password << "\"\n" << "},";
 		return ss;
 	};
 };

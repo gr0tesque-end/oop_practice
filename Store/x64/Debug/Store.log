@@ -1,27 +1,8 @@
 ﻿  Store.cpp
-C:\Projects\Store\Store\ObjectFactory.h(74,16): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+C:\Projects\Store\Store\Log.h(43,55): warning C4309: 'argument': truncation of constant value
   (compiling source file 'Store.cpp')
   
-C:\Projects\Store\Store\Store.h(29,35): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Projects\Store\Store\Store.h(32,35): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Store.cpp')
   
-C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\memory(3597,56): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-  (compiling source file 'Store.cpp')
-      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\memory(3597,56):
-      the template instantiation context (the oldest one first) is
-          C:\Projects\Store\Store\ObjectFactory.h(78,16):
-          see reference to function template instantiation 'std::unique_ptr<Customer,std::default_delete<Customer>> std::make_unique<Customer,int,_Ty&,double,float*,unsigned __int64,int,_Ty&,0>(int &&,_Ty &,double &&,float *&&,unsigned __int64 &&,int &&,_Ty &)' being compiled
-          with
-          [
-              _Ty=std::string
-          ]
-  
-C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\memory(3597,56): warning C4244: 'argument': conversion from '_Ty' to 'float', possible loss of data
-C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\memory(3597,56): warning C4244:         with
-C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\memory(3597,56): warning C4244:         [
-C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\memory(3597,56): warning C4244:             _Ty=double
-C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\memory(3597,56): warning C4244:         ]
-  (compiling source file 'Store.cpp')
-  
-C:\Projects\Store\Store\Db.h(89,1): warning C4715: 'Db::SearchProduct': not all control paths return a value
   Store.vcxproj -> C:\Projects\Store\x64\Debug\Store.exe

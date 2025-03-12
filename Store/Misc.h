@@ -39,7 +39,7 @@ public:
 		bool first = true;
 
 		for (int obj : arr) {
-			if (!first) ss << ", ";
+			if (!first) ss << ',';
 			first = false;
 			ss << std::to_string(obj);
 		}
@@ -52,9 +52,9 @@ public:
 		bool first = true;
 
 		for (auto& obj : arr) {
-			if (!first) ss << ", ";
+			if (!first) ss << ',';
 			first = false;
-			ss << obj;
+			ss << '"' << obj << '"';
 		}
 
 		return ss.str();

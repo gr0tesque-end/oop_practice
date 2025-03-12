@@ -1,6 +1,9 @@
 #pragma once
 #include "Authenticator.h"
 
+const char* Message_Success = "Msg > Success";
+const char* Message_Fail = "Msg > Fail";
+
 class Store
 {
 	Db* db = Db::GetInstance();
@@ -29,17 +32,50 @@ public:
 		acc_customer->ChangeBalance(atof(data[0].c_str()));
 	}
 
-	void BindCustomer(std::shared_ptr<Customer> customer) { acc_customer = customer; }
+	void CreateProduct(const std::vector<std::string>& data /* Name, Price, Stock*/) {
+		if (!acc_employee) {
+			LatestReq = false;
+			return;
+		}
+
+		std::shared_ptr<Log> log = std::make_shared<Log>(
+			-1,
+			2,
+			std::vector<std::string>{},
+			"Create new Product",
+			acc_employee->GetId());
+
+		try
+		{
+			db->push_back(std::make_shared<Product>("-1", data[0], data[1], data[2]))
+				->Flush<Product>();
+			log->AddArg(Message_Success);
+			std::cout << Message_Success << std::endl;
+			
+		}
+		catch (const std::exception&)
+		{
+			LatestReq = false;
+			log->AddArg(Message_Fail);
+			std::cout << Message_Fail << std::endl;
+			return;
+		}
+		db->push_back(log)
+			->Flush<Log>();
+		LatestReq = true;
+	}
+
+	Store& BindCustomer(std::shared_ptr<Customer>& customer) { acc_customer = customer; return *this;  }
 	void UnbindCustomer() { acc_customer = nullptr; }
 
-	void BindEmployee(std::shared_ptr<Employee> employee) { acc_employee = employee; }
+	Store& BindEmployee(std::shared_ptr<Employee>& employee) { acc_employee = employee; return *this; }
 	void UnbindEmployee() { acc_employee = nullptr; }
 
 	std::stringstream Catalog() const {
 		std::stringstream res;
 		for (auto p: db->Products)
 		{
-			res << p->ToString().str() << ',';
+			res << p->ToString().str();
 		}
 		return res;
 	}

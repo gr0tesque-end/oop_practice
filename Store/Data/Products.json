@@ -1,0 +1,15 @@
+
+{
+	"Object": "Product",
+	"Id": "1",
+	"Name": "Apple",
+	"Price": "1.03",
+	"Quantity": "100"
+},
+{
+	"Object": "Product",
+	"Id": "2",
+	"Name": "Chair",
+	"Price": "5.34",
+	"Quantity": "10"
+},

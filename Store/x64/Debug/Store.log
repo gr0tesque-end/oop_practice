@@ -2,6 +2,9 @@
 C:\Projects\Store\Store\ObjectFactory.h(74,16): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Store.cpp')
   
+C:\Projects\Store\Store\Store.h(29,35): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+  (compiling source file 'Store.cpp')
+  
 C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\memory(3597,56): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
   (compiling source file 'Store.cpp')
       C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\memory(3597,56):

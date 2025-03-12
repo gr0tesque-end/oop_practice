@@ -33,11 +33,25 @@ public:
 
 		return ss.str();
 	}
+
 	static std::string ArrToStr(const std::vector<int>& arr) {
 		std::stringstream ss;
 		bool first = true;
 
 		for (int obj : arr) {
+			if (!first) ss << ", ";
+			first = false;
+			ss << std::to_string(obj);
+		}
+
+		return ss.str();
+	}
+
+	static std::string ArrToStr(const std::vector<std::string>& arr) {
+		std::stringstream ss;
+		bool first = true;
+
+		for (auto& obj : arr) {
 			if (!first) ss << ", ";
 			first = false;
 			ss << obj;

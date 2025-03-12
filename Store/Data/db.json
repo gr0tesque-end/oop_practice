@@ -47,21 +47,3 @@
         Price: "11.87",
         Quantity: "100"
 },
-{
-        Object: "Log",
-        Id: "-10007",
-        Action: "0",
-        Arg(s): "[ 3 ]",
-        Description: "",
-        Executioner(s): "[ 2000 ]",
-        OoE(s): "[ 50000 ]"
-},
-{
-        Object: "Log",
-        Id: "-10008",
-        Action: "0",
-        Arg(s): "[ 6, 1 ]",
-        Description: "",
-        Executioner(s): "[ 1004 ]",
-        OoE(s): "[ 50000,60000 ]"
-},

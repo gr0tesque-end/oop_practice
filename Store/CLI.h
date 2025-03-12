@@ -29,9 +29,7 @@ private:
 	}
 
 public:
-	using Action = std::function<void(CLI&)>;
 
-	Action dc;
 	Store store{};
 	std::shared_ptr<Account> acc;
 	std::shared_ptr<Customer> acc_customer;
@@ -42,7 +40,6 @@ public:
 	};
 
 	void Start() {
-		dc = std::mem_fn(&CLI::Start);
 		while (true) {
 
 			acc_customer = nullptr;
@@ -79,7 +76,6 @@ public:
 	}
 
 	void MenuCustomer() {
-		dc = std::mem_fn(&CLI::MenuCustomer);
 		while (true) {
 
 			std::cout << "[Menu]" << std::endl
@@ -103,10 +99,9 @@ public:
 				manualInput<Store>({ "Product_Id", "Quantity" }, std::mem_fn(&Store::Purchase));
 				store.UnbindCustomer();
 
-				if (store.LatestReq) std::cout << Message_Success << std::endl;
-
-				// Log here
-
+				if (store.LatestReq) {
+					std::cout << Message_Success << std::endl;
+				}
 				break;
 			}
 			case 3:
@@ -124,7 +119,6 @@ public:
 	}
 
 	void MenuEmployee() {
-		dc = std::mem_fn(&CLI::MenuEmployee);
 		while (true)
 		{
 			std::cout << "[Start]" << std::endl

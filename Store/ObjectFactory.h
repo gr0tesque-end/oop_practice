@@ -116,27 +116,30 @@ static void RegisterClasses() {
 			);
 
 		});
+
+	/*
+		int id, 
+		int a, 
+		const std::vector<std::string>& args, 
+		std::string& desc,
+		int execerId
+	*/
 	ObjectFactory::Register("Log",
 		[](const std::string& param)-> std::unique_ptr<IObject> {
 			auto params = split(param, '|');
-			auto args = split<int>(params[3], ',', [](std::string& s) {
-				return atoi(s.c_str());
-				});
-			auto ex = split<int>(params[5], ',', [](std::string& s) {
-				return atoi(s.c_str());
-				});
+			auto args = split(params[3], ',');
+			
 			auto ooe = split<int>(params[6], ',', [](std::string& s) {
 				return atoi(s.c_str());
 				});
 
-			// Id, Action, Arg(s), Description, Executioner(s), OoE(s)
+			// Id, Action, Arg(s), Description, Executioner, OoE(s)
 			return std::make_unique<Log>(
 				atoi(params[1].c_str()),
 				atoi(params[2].c_str()),
 				args,
 				params[4],
-				ex,
-				ooe
+				atoi(params[5].c_str())
 			);
 		});
 	c = 1;

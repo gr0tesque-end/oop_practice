@@ -6,41 +6,47 @@
 #include <forward_list>
 
 // <do foo> Product
-enum ProductAction {
-	Buy = 0, 
+enum LogAction {
+	Buy = 0,
 	Return = 1,
-	Restock = 2
+	Restock = 2,
+	Deposit = 3,
+	Refund = 4
 };
 
 // 5.5
 class Log final :
     public IIdentifiable
 {
-	ProductAction action;
+	LogAction action;
 
 	std::stringstream Description;
 
 	std::vector<std::string> args;
 
 	int ExecutionerId;
+	std::string CreatedBy;
 public:
 	Log(int id, 
 		int a, 
 		const std::vector<std::string> args, 
 		const std::string& desc,
-		int execerId):
-		action{ (ProductAction)a }, args{args}, Description{desc}, ExecutionerId{ id }
+		int execerId,
+		const std::string& CreatedBy):
+		action{ (LogAction)a }, IIdentifiable{ id }, 
+		args{args}, Description{desc}, ExecutionerId{execerId},
+		CreatedBy{ CreatedBy } 
 	{
 		this->args.reserve(3);
-		this->id = id;
 	}
 
 	Log(const std::string& id, 
 		const std::string& a,
 		const std::string& args,
 		const std::string& desc,
-		const std::string& execerId) :
-		Log{ atoi(id.c_str()), atoi(a.c_str()), split(args, 255), desc, atoi(execerId.c_str()) }
+		const std::string& execerId,
+		const std::string& CreatedBy) :
+		Log{ atoi(id.c_str()), atoi(a.c_str()), split(args, 255), desc, atoi(execerId.c_str()), CreatedBy }
 	{
 	}
 
@@ -79,7 +85,7 @@ public:
 		return is;
 	}
 
-	void AddArg(std::string arg) { args.push_back(arg); }
+	Log* AddArg(std::string arg) { args.push_back(arg); return this; }
 
 	Log& operator>>(const char* str) {
 		Description << str;
@@ -92,6 +98,9 @@ public:
 
 	virtual const int GetId() const override { return id; }
 
+	bool operator==(std::string desc) const {
+		return this->Description.str() == desc;
+	}
 
 	/*
 		int id, 
@@ -109,9 +118,13 @@ public:
 			<< "\t\"Action\": \"" << action << "\",\n"
 			<< "\t\"Arg(s)\": \"[ " << Misc::ArrToStr(args) << " ]\",\n"
 			<< "\t\"Description\": \"" << Description.str() << "\",\n"
-			<< "\t\"Executioner\": \"" << ExecutionerId << "\"\n"
+			<< "\t\"Executioner\": \"" << ExecutionerId << "\",\n"
+			<< "\t\"CreatedBy\": \"" << CreatedBy << "\"\n"
 			<< "},";
 		return ss;
 	};
+
+	friend class Db;
+	friend class Store;
 };
 

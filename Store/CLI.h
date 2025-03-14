@@ -9,6 +9,7 @@
 #include <memory>
 
 #include "Store.h"
+#include <cassert>
 
 class CLI;
 
@@ -29,7 +30,6 @@ private:
 public:
 
 	Store store{};
-	std::shared_ptr<Account> acc;
 	std::shared_ptr<Customer> acc_customer;
 	std::shared_ptr<Employee> acc_employee;
 
@@ -38,6 +38,7 @@ public:
 	};
 
 	void Start() {
+
 		while (true) {
 
 			acc_customer = nullptr;
@@ -60,17 +61,15 @@ public:
 				return;
 			}
 
-			if (acc) {
+			if (acc_customer) {
 				std::cout << Message_Success << std::endl;
+				MenuCustomer();
 				system("cls");
-				if (acc_employee) {
-					//store.employee = acc_employee;
-					MenuEmployee();
-				}
-				else if (acc_customer) {
-					//store.customer = acc_customer;
-					MenuCustomer();
-				}
+			}
+			else if (acc_employee) {
+				std::cout << Message_Success << std::endl;
+				MenuEmployee();
+				system("cls");
 			}
 		}
 	}
@@ -79,14 +78,14 @@ public:
 		while (true) {
 
 			std::cout << "[Menu]" << std::endl
-				<< "Msg > Welcome, " << acc->GetName() << std::endl
+				<< "Msg > Welcome, " << acc_customer->GetName() << std::endl
 				<< "Balance > " << acc_customer->GetBalance() << std::endl;
 			int i1 = optionInput({
 				"Catalog of products",  // 1 # Implemented
-				"Buy a product",        // 2 # Implemented
-				"Deposit",              // 3 # Implemented
-				"History",              // 4 # Need Logging
-				"Refund Req"			// 5 # Need Logging
+				"Buy a product",        // 2 # Implemented + logging
+				"Deposit",              // 3 # Implemented + logging
+				"History",              // 4 # Implemented
+				"Refund Req"			// 5 # Implemented + logging
 				});
 
 			switch (i1) {
@@ -101,10 +100,6 @@ public:
 				store.BindCustomer(acc_customer);
 				manualInput<Store>({ "Product_Id", "Quantity" }, std::mem_fn(&Store::Purchase));
 				store.UnbindCustomer();
-
-				if (store.LatestReq) {
-					std::cout << Message_Success << std::endl;
-				}
 				break;
 			}
 			case 3:
@@ -112,6 +107,16 @@ public:
 				manualInput<Store>({ "Amount" }, std::mem_fn(&Store::Deposit));
 				store.UnbindCustomer();
 
+				break;
+			case 4:
+				store.BindCustomer(acc_customer);
+				std::cout << store.Get_AcountRelated_Logs_str().str();
+				store.UnbindCustomer();
+				break;
+			case 5:
+				store.BindCustomer(acc_customer);
+				manualInput<Store>({ "Purchase_Id" }, std::mem_fn(&Store::RefundReq));
+				store.UnbindCustomer();
 				break;
 			default:
 				return;
@@ -123,13 +128,14 @@ public:
 		while (true)
 		{
 			std::cout << "[Start]" << std::endl
-				<< "Msg > Welcome, " << acc->GetName()
+				<< "Msg > Welcome, " << acc_employee->GetName()
 				<< " [Employee]" << std::endl;
 			int i1 = optionInput({
-				"Modify Account(s)",
-				"Modify Product(s)", // # 1/4
-				"See Logs",
-				"See Accounts"
+				"Modify Account(s)",//
+				"Product(s)",		// 2/3
+				"See Logs",         // 
+				"See Accounts",		//
+				"Refund requests"	// imp
 				});
 
 			switch (i1)
@@ -141,6 +147,9 @@ public:
 				break;
 			case 2:
 				MenuEmployee_Products();
+				break;
+			case 5:
+				RefundMenu();
 				break;
 			default:
 				return;
@@ -154,10 +163,9 @@ public:
 		{
 			std::cout << "[Products]" << std::endl;
 			int i1 = optionInput({
-				"Modify Product(s)",
+				"Modify Product(s)", //
 				"Create Product",    // # Implemented /w logging 
-				"See Products",
-				"See refund requests"
+				"See Products",		 // # imp
 				});
 
 			switch (i1)
@@ -173,6 +181,50 @@ public:
 					"Name", "Price", "Stock"
 					}, std::mem_fn(&Store::CreateProduct));
 				store.UnbindEmployee();
+				break;
+			case 3:
+				std::cout << store.Catalog().str() << std::endl;
+				break;
+			case 4:
+				
+				break;
+			default:
+				return;
+			}
+		}
+	}
+
+	void RefundMenu() {
+		system("cls");
+		while (true)
+		{
+			auto refunds = store.Get_Logs([](std::shared_ptr<Log> l)-> bool {
+				return *l == "Refund_req";
+				});
+
+			std::cout << "[Refunds]" << std::endl;
+			int i1 = optionInput({
+				"Process Refund",		// imp
+				"See Refunds",			// imp
+				"See completed Refunds" // imp
+				});
+
+			switch (i1)
+			{
+			case 1:
+				store.BindEmployee(acc_employee);
+				manualInput<Store>({
+					"RefundId", "Answer (y/n)"
+					}, std::mem_fn(&Store::ProcessRefund));
+				store.UnbindEmployee();
+				break;
+			case 2:
+				for (auto r : refunds) std::cout << store.Log_to_string(r) << std::endl;
+				break;
+			case 3:
+				for (auto r : store.Get_Logs([](auto l) {
+					return *l == "Refund_accept" || *l == "Refund_deny";
+					})) std::cout << store.Log_to_string(r) << std::endl;
 				break;
 			default:
 				return;
@@ -243,7 +295,9 @@ public:
 	}
 
 	void LogIn(const std::vector<std::string>& data) {
-		acc = _LogIn(data[0], data[1]);
+		acc_customer = nullptr;
+		acc_employee = nullptr;
+		auto acc = _LogIn(data[0], data[1]);
 		if (!acc) {
 			std::cout << "Msg > Login failed. Try again.\n";
 		}
@@ -255,9 +309,20 @@ public:
 				acc_customer = dynamic_pointer_cast<Customer, Account>(acc);
 			}
 		}
+		if (!(bool(acc_employee) ^ bool(acc_customer))) {
+			throw std::exception("!(acc_employee ^ acc_customer)");
+		}
 	}
 
 	void SignUp(const std::vector<std::string>& data) {
+		acc_customer = nullptr;
+		acc_employee = nullptr;
+
+		if (data[1] != data[2]) {
+			std::cout << Message_Fail << " > Passwords must match" << std::endl;
+			return;
+		}
+
 		// ^(\w+)(\<(\w+)\>\["(\w+)", ?"(\w+)"\])?$
 		std::regex pattern{
 			"^(\\w+)(\\<(\\w+)\\>\\[\"(\\w+)\", ?\"(\\w+)\"(, ?\"(\\w+)\")?\\])?$",
@@ -279,7 +344,7 @@ public:
 		// "100" at 7
 
 		if (Authenticator::VerifyUsernameExists(match[1])) {
-			std::cout << "Username already exists!" << std::endl;
+			std::cout << Message_Fail << " > Username already exists!" << std::endl;
 			manualInput<CLI>({ "User", "Password", "Repeat Password" }, std::mem_fn(&CLI::SignUp));
 		}
 
@@ -291,26 +356,32 @@ public:
 					int newAuth = atoi(match[7].str().c_str());
 					if (newAuth >= AuthorityEmployeeThreshhold) {
 						acc_employee = std::make_shared<Employee>(-1, match[1].str(), 0.f, newAuth, data[1]);
-						acc = acc_employee;
 						store.db->push_back(acc_employee);
 						store.db->Flush<Employee>();
 					}
 					else {
 						acc_customer = std::make_shared<Customer>(-1, match[1].str(), 0.f, newAuth, data[1]);
-						acc = acc_customer;
 						store.db->push_back(acc_customer);
 						store.db->Flush<Customer>();
 					}
 				}
 			}
+			else SignUp_BaseCase(data);
 			// [Expand here]
 		}
-		if (match.size() >= 1) {
-			if (!acc_customer) {
-				acc_customer = std::make_shared<Customer>(-1, match[1].str(), 0.f, 0, data[1]);
-				store.db->push_back(acc_customer);
-				store.db->Flush<Customer>();
-			}
+		else SignUp_BaseCase(data);
+
+		if (!(bool(acc_employee) ^ bool(acc_customer))) {
+			throw std::exception("!(acc_employee ^ acc_customer)");
+		}
+	}
+private:
+
+	void SignUp_BaseCase(const std::vector<std::string>& data) {
+		if (!acc_customer) {
+			acc_customer = std::make_shared<Customer>(-1, data[0], 0.f, 0, data[1]);
+			store.db->push_back(acc_customer);
+			store.db->Flush<Customer>();
 		}
 	}
 };

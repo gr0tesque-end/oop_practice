@@ -1,17 +1,25 @@
 
 {
 	"Object": "Customer",
-	"Id": "-1",
-	"Name": "John",
-	"Balance": "0",
+	"Id": "1",
+	"Name": "Bill",
+	"Balance": "90.46",
 	"Authority": "0",
-	"Pass": "j123"
+	"Pass": "b123"
 },
 {
 	"Object": "Customer",
-	"Id": "0",
-	"Name": "Admin",
+	"Id": "2",
+	"Name": "Peter",
 	"Balance": "0",
 	"Authority": "0",
-	"Pass": "admi"
+	"Pass": "p123"
+},
+{
+	"Object": "Customer",
+	"Id": "3",
+	"Name": "Amy",
+	"Balance": "0",
+	"Authority": "0",
+	"Pass": "a123"
 },

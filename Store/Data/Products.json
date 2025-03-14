@@ -13,3 +13,24 @@
 	"Price": "5.34",
 	"Quantity": "10"
 },
+{
+	"Object": "Product",
+	"Id": "3",
+	"Name": "Ketchup",
+	"Price": "2.32",
+	"Quantity": "30"
+},
+{
+	"Object": "Product",
+	"Id": "4",
+	"Name": "Water 0.5L",
+	"Price": "0.25",
+	"Quantity": "100"
+},
+{
+	"Object": "Product",
+	"Id": "5",
+	"Name": "Potatoes 1kg",
+	"Price": "0.6",
+	"Quantity": "150"
+},

@@ -1,8 +1,14 @@
 ﻿  Store.cpp
-C:\Projects\Store\Store\Log.h(43,55): warning C4309: 'argument': truncation of constant value
+C:\Projects\Store\Store\Log.h(49,55): warning C4309: 'argument': truncation of constant value
   (compiling source file 'Store.cpp')
   
-C:\Projects\Store\Store\Store.h(32,35): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Projects\Store\Store\Store.h(117,18): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  (compiling source file 'Store.cpp')
+  
+C:\Projects\Store\Store\Store.h(203,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  (compiling source file 'Store.cpp')
+  
+C:\Projects\Store\Store\Store.h(210,18): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
   (compiling source file 'Store.cpp')
   
   Store.vcxproj -> C:\Projects\Store\x64\Debug\Store.exe

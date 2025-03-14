@@ -115,7 +115,8 @@ static void RegisterClasses() {
 				params[2],
 				args_parsed,
 				params[4],
-				params[5]
+				params[5],
+				params[6]
 			);
 		});
 	c = 1;

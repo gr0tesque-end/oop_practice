@@ -26,8 +26,7 @@ public:
 		: _price{ price }, IIdentifiable(), INameable(name), _quantity{ quantity } {
 	}
 	Product(int id, const std::string& name, float price, int quantity)
-		: _price{ price }, INameable(name), _quantity{ quantity } {
-		this->id = id;
+		: _price{ price }, INameable(name), _quantity{ quantity }, IIdentifiable{ id } {
 	}
 
 	Product(const std::string& id, const std::string& name, const std::string& price, const std::string& quantity)
@@ -82,4 +81,6 @@ public:
 			<< "\t\"Quantity\": \"" << _quantity << "\"\n" << "},";
 		return ss;
 	};
+
+	friend class Store;
 };

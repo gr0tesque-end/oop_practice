@@ -80,7 +80,7 @@ class Db final
 
 				switch (i)
 				{
-				case 0: 
+				case 0:
 					Logs.push_back(std::shared_ptr<Log>(dynamic_cast<Log*>(obj)));
 					break;
 				case 1:
@@ -100,24 +100,24 @@ class Db final
 			}
 		}
 
-			/*if (auto* item = dynamic_cast<Product*>(obj.get())) {
-				Products.push_back(item);
-			}
-			else if (auto* item = dynamic_cast<Log*>(obj.get())) {
-				Logs.push_back(item);
-			}
-			else if (auto* item = dynamic_cast<Customer*>(obj.get())) {
-				Customers.push_back(item);
-			}
-			else if (auto* item = dynamic_cast<Employee*>(obj.get())) {
-				Employees.push_back(item);
-			}
-			else {
-				std::cerr << "Unknown object type!\n";
-			}*/
+		/*if (auto* item = dynamic_cast<Product*>(obj.get())) {
+			Products.push_back(item);
+		}
+		else if (auto* item = dynamic_cast<Log*>(obj.get())) {
+			Logs.push_back(item);
+		}
+		else if (auto* item = dynamic_cast<Customer*>(obj.get())) {
+			Customers.push_back(item);
+		}
+		else if (auto* item = dynamic_cast<Employee*>(obj.get())) {
+			Employees.push_back(item);
+		}
+		else {
+			std::cerr << "Unknown object type!\n";
+		}*/
 
-			//GlobalList.push_back(&Employees);
-		
+		//GlobalList.push_back(&Employees);
+
 	}
 	static Db* db;
 
@@ -173,17 +173,18 @@ public:
 
 	// Sorts by Id before flush
 	template<DbStorable T>
-	void Flush() {
+	Db* Flush() {
 		auto& cont = GetContainer<T>();
 		cont.sort([](const std::shared_ptr<T>& a, const std::shared_ptr<T>& b) {
 			return a->GetId() < b->GetId();
 			});
 		Serializer::Serialize(*cont.front(), files[GetIndex<T>()], std::ios::out);
-		for (int i{}; auto& o: cont)
+		for (int i{}; auto & o: cont)
 		{
 			if (i++ == 0) continue;
 			Serializer::Serialize(*o, files[GetIndex<T>()], std::ios::app);
 		}
+		return this;
 	}
 
 	/*template<isStoredInDb T>
@@ -193,9 +194,29 @@ public:
 		}
 	}*/
 
-	std::shared_ptr<Product> SearchProduct(int id) {
-		for (auto p : Products) {
+	std::shared_ptr<Product> SearchProduct(int id) const {
+		for (std::shared_ptr<Product> p : Products) {
 			if (p->GetId() == id) return p;
+		}
+		return nullptr;
+	}
+
+	std::shared_ptr<Log> SearchPurchase(int customerId, int logId) const {
+
+		for (std::shared_ptr<Log> l : Logs) {
+			if (l->ExecutionerId != customerId || l->id != logId) continue;
+			if (l->Description.str() == "Purchase") {
+				return l;
+			}
+		}
+
+		return nullptr;
+	}
+
+	std::shared_ptr<Customer> SearchCustomer(int customerId) const {
+		for (std::shared_ptr<Customer> c : Customers)
+		{
+			if (c->GetId() == customerId) return c;
 		}
 		return nullptr;
 	}

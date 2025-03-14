@@ -11,9 +11,7 @@ class Employee
 	float _sales;
 public:
 	Employee(int id, const std::string& name, float sales, int Authority, const std::string& pass)
-		: Account(name, pass, Authority), _sales{ sales } {
-		if (id < 0) return;
-		this->id = id;
+		: Account(name, pass, Authority), _sales{ sales }, IIdentifiable{ id } {
 	}
 
 	Employee(const std::string& id,

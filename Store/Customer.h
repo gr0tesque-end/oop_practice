@@ -28,9 +28,7 @@ public:
 			 float balance,
 			 int auth,
 			 const std::string& pass)
-		: Account(name, pass, auth), _balance{ balance } {
-		if (id < 0) return;
-		id = Id;
+		: Account(name, pass, auth), _balance{ balance }, IIdentifiable{ Id } {
 	}
 
 	Customer(const std::string& Id,
@@ -57,17 +55,11 @@ public:
 
 	float GetBalance() const { return this->_balance; }
 
-	virtual bool Buy(const float& price) {
-		if (price > _balance) { std::cerr << "Insufficient funds\n"; return false; }
-		_balance -= price;
-
-		return true;
-	}
-	virtual bool Buy(Product& prod, int quantity) {
+	bool Buy(Product& prod, int quantity) {
 		float p = prod.GetPrice() * quantity;
-		if (p > _balance) { std::cerr << "Insufficient funds\n"; return false; }
+		if (p > _balance) { throw std::exception("Insufficient funds"); return false; }
 		_balance -= p;
-
+		prod.ChangeQuantity(-quantity);
 		return true;
 	}
 

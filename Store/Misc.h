@@ -3,6 +3,31 @@
 #include <sstream>
 #include <forward_list>
 
+#include <cmath>
+
+bool areEqual(float a, float b, int decimalPlaces = 2) {
+	float multiplier = std::pow(10, decimalPlaces);
+	float roundedA = std::round(a * multiplier) / multiplier;
+	float roundedB = std::round(b * multiplier) / multiplier;
+
+	return roundedA == roundedB;
+}
+
+bool isLess(float a, float b, int decimalPlaces = 2) {
+	float multiplier = std::pow(10, decimalPlaces);
+	float roundedA = std::round(a * multiplier) / multiplier;
+	float roundedB = std::round(b * multiplier) / multiplier;
+
+	return roundedA > roundedB;
+}
+bool isBigger(float a, float b, int decimalPlaces = 2) {
+	float multiplier = std::pow(10, decimalPlaces);
+	float roundedA = std::round(a * multiplier) / multiplier;
+	float roundedB = std::round(b * multiplier) / multiplier;
+
+	return roundedA < roundedB;
+}
+
 class Misc
 {
 public:

@@ -11,6 +11,19 @@ const char* Account_NotBound = " > Account not bound";
 const char* Log_NotFound = " > Log not found";
 const char* Product_NotFound = Log_NotFound;
 const char* Purchase_NotFound = Log_NotFound;
+const char* Type_NotFound = " > Unrecognised type > ";
+
+class CLI;
+
+template <typename T>
+concept IsAuthorisedClass =
+std::is_same_v<T, CLI> ||
+std::is_same_v<T, Store>;
+
+template<IsAuthorisedClass AC>
+using ProcessingMethod = std::function<void(AC&, const std::vector<std::string>&)>;
+
+using ProcessingAction = std::function<void(const std::vector<std::string>&)>;
 
 class Store
 {
@@ -18,17 +31,27 @@ class Store
 
 	std::shared_ptr<Customer> acc_customer;
 	std::shared_ptr<Employee> acc_employee;
+
 public:
+	std::list<std::string> search_result;
+
+	ProcessingAction SearchFunc;
+
 	// c-bound
-	void RefundReq(const std::vector<std::string>& data /* ProductId */) {
+	void RefundReq(const std::vector<std::string>& data) {
 		if (!acc_customer) {
 			std::cout << Message_Fail << " > " << Customer_NotBound << std::endl;
 			return;
 		}
 
 		int id = atoi(data[0].c_str());
+		int cusId = acc_customer->GetId();
 
-		auto l = db->SearchPurchase(acc_customer->GetId(), id);
+		auto l = db->Search<Log>([cusId, id](auto l) {
+			return l->GetDescription() == "Purchase" &&
+				(l->ExecutionerId != cusId || l->id != id);
+			});
+
 		if (!l) { std::cout << Message_Fail << Purchase_NotFound << std::endl; return; }
 
 		std::list<char> prodId{};
@@ -36,11 +59,12 @@ public:
 			prodId.push_front(*rbegiter);
 		}
 		float price{};
-		if (auto p = db->SearchProduct(
-			atoi(std::string{ 
-				prodId.begin(), 
+		if (auto p = db->Search<Product>([prodId](auto prod) {
+			return prod->GetId() == atoi(std::string{
+				prodId.begin(),
 				prodId.end() }
-				.c_str()))
+			.c_str());
+			})
 			) {
 		}
 		else {
@@ -60,7 +84,7 @@ public:
 		std::cout << Message_Success << std::endl;
 
 		db->push_back(log)
-			->Flush<Log>();
+			->Flush<Log>(true);
 	}
 	// c-bound
 	void Purchase(const std::vector<std::string>& data /* Id & Quantity + customer_id */) {
@@ -71,7 +95,9 @@ public:
 
 		int id = atoi(data[0].c_str());
 
-		auto p = db->SearchProduct(id);
+		auto p = db->Search<Product>([id](auto prod) {
+			return prod->GetId() == id;
+			});
 
 		if (!p) {
 			std::cout << Message_Fail << " > " << Product_NotFound << std::endl;
@@ -95,7 +121,7 @@ public:
 				->AddArg(std::string{ "ProductId: " + std::to_string(p->GetId()) });
 			std::cout << Message_Success << std::endl;
 			db->push_back(log)
-				->Flush<Log>()
+				->Flush<Log>(true)
 				->Flush<Customer>()
 				->Flush<Product>();
 		}
@@ -127,7 +153,7 @@ public:
 		acc_customer->ChangeBalance(how_much);
 
 		db->push_back(log)
-			->Flush<Log>()
+			->Flush<Log>(true)
 			->Flush<Customer>();
 
 		std::cout << Message_Success << std::endl;
@@ -151,7 +177,7 @@ public:
 		{
 			auto p = std::make_shared<Product>("-1", data[0], data[1], data[2]);
 			db->push_back(p)
-				->Flush<Product>();
+				->Flush<Product>(true);
 			log->AddArg(Message_Success)
 				->AddArg(std::string{ "ProductId: " + std::to_string(p->GetId()) });
 			std::cout << Message_Success << std::endl;
@@ -164,11 +190,8 @@ public:
 			return;
 		}
 		db->push_back(log)
-			->Flush<Log>();
+			->Flush<Log>(true);
 	}
-
-	template<typename T>
-	using Predicate = std::function<bool(std::shared_ptr<T>)>;
 
 	// e-bound
 	void ProcessRefund(const std::vector<std::string>& data) {
@@ -178,7 +201,7 @@ public:
 		}
 		int logId = atoi(data[0].c_str());
 
-		auto log = this->Get_Log([logId](std::shared_ptr<Log> log)-> bool {
+		auto log = db->Search<Log>([logId](std::shared_ptr<Log> log)-> bool {
 			return log->GetId() == logId && *log == "Refund_req";
 			});
 
@@ -199,13 +222,18 @@ public:
 
 		}
 		else {
-			auto c = db->SearchCustomer(log->ExecutionerId);
+			auto c = db->Search<Customer>([log](std::shared_ptr<Customer> customer) {
+				return customer->GetId() == log->ExecutionerId;
+				});
 			float price = atof(log->args[1].c_str());
 			if (c)
 			{
 				c->ChangeBalance(price);
 			}
-			auto p = db->SearchProduct(atoi(data[0].c_str()));
+			int id = atoi(data[0].c_str());
+			auto p = db->Search<Product>([id](auto prod) {
+				return prod->GetId() == id;
+				});
 			if (p) {
 				int quantity = p->GetPrice() / price;
 				p->ChangeQuantity(quantity);
@@ -259,7 +287,79 @@ public:
 		return res;
 	}
 
+	void BuildSearchFunc(const std::vector<std::string>& data) {
+		const auto& type = data[0], & param = data[1];
+		bool isIntegral = false;
+		char op{ '=' };
 
+		float searchVal{};
+		// I'm definetely going to prison for this one
+		SearchFunc = [&, type, param](const std::vector<std::string>& dataInner) {
+			if (isIntegral = dataInner[0][0] == '(') {
+				char first = dataInner[0][1];
+
+				searchVal = static_cast<float>(atof(dataInner[0].c_str() + 2));
+				switch (first)
+				{
+				case '>':
+					op = '>';
+					break;
+				case '<':
+					op = '<';
+					break;
+				case '!':
+					op = '!';
+					break;
+				default:
+					break;
+				};
+			}
+			for (auto& item : db->SearchAll(type.c_str(), [param, isIntegral, op, searchVal, dataInner](auto obj) -> bool {
+				auto objData = split(obj->ToString().str(), '"');
+
+				bool foundParam{ 0 };
+
+				for (int i{ -1 }; const auto & p : objData) {
+					++i;
+					if (foundParam) {
+						// Value
+						if (i % 4 == 3) {
+							if (!isIntegral) return dataInner[0] == p;
+							
+							float val{ static_cast<float>(atof(p.c_str())) };
+
+							switch (op)
+							{
+							case '>':
+								return isLess(val, searchVal);
+								break;
+							case '<':
+								return isBigger(val, searchVal);
+								break;
+							case '!':
+								return !areEqual(val, searchVal);
+								break;
+							default:
+								return areEqual(val, searchVal);
+								break;
+							}
+						}
+						continue;
+					}
+					// Key
+					if (i % 4 == 1) {
+						foundParam = toupper(param[0]) == p[0];
+					}
+				}
+				// if after the loop, foundParam is still false
+				// then param wasn't found
+				return false;
+				})) 
+			{
+				search_result.push_back(item->ToString().str());
+			}
+		};
+	}
 
 	std::string Log_to_string(std::shared_ptr<Log> l) const {
 		std::stringstream res{};
@@ -274,7 +374,7 @@ public:
 		return res.str();
 	}
 
-	std::list<std::shared_ptr<Log>> Get_Logs(Predicate<Log> predicate) const {
+	std::list<std::shared_ptr<Log>> SearchLogs(Predicate<Log> predicate) const {
 		std::list<std::shared_ptr<Log>> res{};
 		for (std::shared_ptr<Log> l : db->Logs) {
 			if (!predicate(l)) continue;
@@ -283,15 +383,13 @@ public:
 		return res;
 	}
 
-	std::shared_ptr<Log> Get_Log(Predicate<Log> predicate) const {
+	std::shared_ptr<Log> SearchLog(Predicate<Log> predicate) const {
 		for (std::shared_ptr<Log> l : db->Logs) {
 			if (!predicate(l)) continue;
 			return l;
 		}
 		return nullptr;
 	}
-
-
 	friend class CLI;
 };
 

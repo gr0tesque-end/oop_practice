@@ -10,6 +10,8 @@ class Employee
 {
 	float _sales;
 public:
+	const static std::string Type;
+
 	Employee(int id, const std::string& name, float sales, int Authority, const std::string& pass)
 		: Account(name, pass, Authority), _sales{ sales }, IIdentifiable{ id } {
 	}
@@ -50,5 +52,4 @@ public:
 	};
 };
 
-
-
+const std::string Employee::Type{ "Employee" };

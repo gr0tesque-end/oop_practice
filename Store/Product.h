@@ -11,6 +11,8 @@ class Product
 	float _price;
 	int _quantity;
 public:
+	const static std::string Type;
+
 	Product()
 		: Product{ "" } {
 	}
@@ -84,3 +86,4 @@ public:
 
 	friend class Store;
 };
+const std::string Product::Type{ "Product" };

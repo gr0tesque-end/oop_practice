@@ -23,6 +23,8 @@ class Customer
 protected:
 	float _balance;
 public:
+	const static std::string Type;
+
 	Customer(int Id,
 			 const std::string& name,
 			 float balance,
@@ -82,5 +84,6 @@ public:
 	};
 
 };
+const std::string Customer::Type{ "Customer" };
 
 #endif // CUSTOMER_H

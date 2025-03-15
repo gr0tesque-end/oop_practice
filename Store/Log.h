@@ -27,6 +27,8 @@ class Log final :
 	int ExecutionerId;
 	std::string CreatedBy;
 public:
+	const static std::string Type;
+
 	Log(int id, 
 		int a, 
 		const std::vector<std::string> args, 
@@ -96,6 +98,10 @@ public:
 		return *this;
 	}
 
+	std::string GetDescription() const {
+		return Description.str();
+	}
+
 	virtual const int GetId() const override { return id; }
 
 	bool operator==(std::string desc) const {
@@ -127,4 +133,4 @@ public:
 	friend class Db;
 	friend class Store;
 };
-
+const std::string Log::Type{ "Log" };

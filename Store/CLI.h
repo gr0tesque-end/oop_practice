@@ -13,14 +13,6 @@
 
 class CLI;
 
-template <typename T>
-concept IsAuthorisedClass =
-std::is_same_v<T, CLI> ||
-std::is_same_v<T, Store>;
-
-template<IsAuthorisedClass AC>
-using ProcessingAction = std::function<void(AC&, const std::vector<std::string>&)>;
-
 class CLI {
 private:
 	std::shared_ptr<Account> _LogIn(const std::string& name, const std::string& pass) {
@@ -131,10 +123,9 @@ public:
 				<< "Msg > Welcome, " << acc_employee->GetName()
 				<< " [Employee]" << std::endl;
 			int i1 = optionInput({
-				"Modify Account(s)",//
+				"Account(s)",		//
 				"Product(s)",		// 2/3
-				"See Logs",         // 
-				"See Accounts",		//
+				"Search Object",    // imp
 				"Refund requests"	// imp
 				});
 
@@ -148,8 +139,46 @@ public:
 			case 2:
 				MenuEmployee_Products();
 				break;
-			case 5:
-				RefundMenu();
+			case 3: {
+				manualInput<Store>({
+						"Object Name (e.g. Log, Customer or Product)",
+						R"(Possible options: 
+Any:
+	Id
+Customer: 
+	Name,
+	Balance
+Employee:
+	Name,
+	Authority
+Product:
+	Name,
+	Price,
+	Quantity
+Logs:	
+	Description,
+	Executionerid,
+	CreatedBy (object type)
+Parameter name (can enter first letter))"
+					}, std::mem_fn(&Store::BuildSearchFunc));
+
+				manualInput(
+					{ "Parameter value (can use comparason with the integral types;\nWhen comparing integral types, type '(' before your expression\ndouble operators e.g. >= not allowed\ne.g \"(>4.43\", \"(<33\", \"(!3\" '!' for the 'not equal')" },
+					store.SearchFunc);
+
+				
+				std::cout << "Result: " << std::endl;
+				for (const std::string& res : store.search_result)
+				{
+					std::cout << res;
+				}
+				
+				std::cout << "\nFound: " << store.search_result.size() << " occurences" << std::endl;
+				store.search_result.clear();
+				break;
+			}
+			case 4:
+				MenuEmployee_Refunds();
 				break;
 			default:
 				return;
@@ -163,7 +192,7 @@ public:
 		{
 			std::cout << "[Products]" << std::endl;
 			int i1 = optionInput({
-				"Modify Product(s)", //
+				"Modify Product(s)", // 
 				"Create Product",    // # Implemented /w logging 
 				"See Products",		 // # imp
 				});
@@ -186,7 +215,7 @@ public:
 				std::cout << store.Catalog().str() << std::endl;
 				break;
 			case 4:
-				
+
 				break;
 			default:
 				return;
@@ -194,11 +223,11 @@ public:
 		}
 	}
 
-	void RefundMenu() {
+	void MenuEmployee_Refunds() {
 		system("cls");
 		while (true)
 		{
-			auto refunds = store.Get_Logs([](std::shared_ptr<Log> l)-> bool {
+			auto refunds = store.SearchLogs([](std::shared_ptr<Log> l)-> bool {
 				return *l == "Refund_req";
 				});
 
@@ -222,7 +251,7 @@ public:
 				for (auto r : refunds) std::cout << store.Log_to_string(r) << std::endl;
 				break;
 			case 3:
-				for (auto r : store.Get_Logs([](auto l) {
+				for (auto r : store.SearchLogs([](auto l) {
 					return *l == "Refund_accept" || *l == "Refund_deny";
 					})) std::cout << store.Log_to_string(r) << std::endl;
 				break;
@@ -267,7 +296,7 @@ public:
 
 	template<IsAuthorisedClass T>
 	void manualInput(std::vector<std::string> inputParams,
-		ProcessingAction<T> nextCall) {
+		ProcessingMethod<T> nextCall) {
 
 		int i{};
 		for (const auto& o : inputParams) {
@@ -292,6 +321,26 @@ public:
 		else {
 			nextCall(store, inputParams);
 		}
+	}
+
+	void manualInput(std::vector<std::string> inputParams,
+		ProcessingAction nextCall) {
+
+		int i{};
+		for (const auto& o : inputParams) {
+			std::string loc;
+			std::cout << o << " (.q to cancel) > ";
+			std::getline(std::cin, loc);
+
+			if (loc.starts_with(".q")) {
+				return;
+			}
+
+			inputParams[i] = loc;
+			++i;
+		}
+
+		nextCall(inputParams);
 	}
 
 	void LogIn(const std::vector<std::string>& data) {

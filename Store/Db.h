@@ -18,6 +18,9 @@ enum Objs {
 	Customers = 3
 };
 
+template<typename T>
+using Predicate = std::function<bool(std::shared_ptr<T>)>;
+
 class Db final
 {
 	/*template<DbStorable T>
@@ -28,7 +31,7 @@ class Db final
 	}*/
 
 	template<DbStorable T>
-	std::list<std::shared_ptr<T>>& GetContainer() {
+	std::list<std::shared_ptr<T>> GetContainer() const {
 		if constexpr (std::is_same_v<T, Log>) {
 			return Logs;
 		}
@@ -43,6 +46,38 @@ class Db final
 		{
 			return Customers;
 		}
+	}
+
+	template<DbStorable T>
+	std::list<std::shared_ptr<IObject>> CastToBase() const {
+		std::list<std::shared_ptr<IObject>> res{};
+		for (const auto& elem : GetContainer<T>()) {
+			res.push_back(elem);
+		}
+		return res;
+	}
+
+	std::list<std::shared_ptr<IObject>> GetContainer(const char* Type) const {
+		switch (Type[0])
+		{
+		case 'L':
+			return CastToBase<Log>();
+			break;
+		case 'E':
+			return CastToBase<Employee>();
+			break;
+		case 'C':
+			return CastToBase<Customer>();
+			break;
+		case 'P':
+			return CastToBase<Product>();
+			break;
+		default:
+			break;
+		}
+		return {
+			nullptr
+		};
 	}
 
 	template<DbStorable T>
@@ -171,13 +206,16 @@ public:
 		return db;
 	}
 
-	// Sorts by Id before flush
 	template<DbStorable T>
-	Db* Flush() {
-		auto& cont = GetContainer<T>();
-		cont.sort([](const std::shared_ptr<T>& a, const std::shared_ptr<T>& b) {
-			return a->GetId() < b->GetId();
-			});
+	Db* Flush(bool sort = false) {
+		auto cont = GetContainer<T>();
+
+		if (sort) {
+			cont.sort([](const std::shared_ptr<T>& a, const std::shared_ptr<T>& b) {
+				return a->GetId() < b->GetId();
+				});
+		}
+
 		Serializer::Serialize(*cont.front(), files[GetIndex<T>()], std::ios::out);
 		for (int i{}; auto & o: cont)
 		{
@@ -194,31 +232,45 @@ public:
 		}
 	}*/
 
-	std::shared_ptr<Product> SearchProduct(int id) const {
+	std::shared_ptr<Product> SearchProduct(Predicate<Product> prod) const {
 		for (std::shared_ptr<Product> p : Products) {
-			if (p->GetId() == id) return p;
+			if (prod(p)) return p;
 		}
 		return nullptr;
 	}
 
-	std::shared_ptr<Log> SearchPurchase(int customerId, int logId) const {
+	std::shared_ptr<Log> SearchPurchase(Predicate<Log> pred) const {
 
 		for (std::shared_ptr<Log> l : Logs) {
-			if (l->ExecutionerId != customerId || l->id != logId) continue;
 			if (l->Description.str() == "Purchase") {
-				return l;
+				if (pred(l)) return l;
 			}
 		}
 
 		return nullptr;
 	}
 
-	std::shared_ptr<Customer> SearchCustomer(int customerId) const {
+	std::shared_ptr<Customer> SearchCustomer(Predicate<Customer> pred) const {
 		for (std::shared_ptr<Customer> c : Customers)
 		{
-			if (c->GetId() == customerId) return c;
+			if (pred(c)) return c;
 		}
 		return nullptr;
+	}
+
+	template<DbStorable T>
+	std::shared_ptr<T> Search(Predicate<T> pred) const {
+		for (const auto& ptr : GetContainer<T>()) {
+			if (pred(ptr)) return ptr;
+		}
+	}
+
+	std::list<std::shared_ptr<IObject>> SearchAll(const char* Type, Predicate<IObject> pred) const {
+		std::list<std::shared_ptr<IObject>> res{ };
+		for (auto& ptr : GetContainer(Type)) {
+			if (pred(ptr)) res.push_back(ptr);
+		}
+		return res;
 	}
 
 	friend class Authenticator;

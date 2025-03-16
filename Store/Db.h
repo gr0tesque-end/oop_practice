@@ -16,6 +16,8 @@ using Predicate = std::function<bool(std::shared_ptr<T>)>;
 
 class Db final
 {
+
+#pragma region Container Helpers
 	template<DbStorable T>
 	std::list<std::shared_ptr<T>> GetContainer() const {
 		if constexpr (std::is_same_v<T, Log>) {
@@ -67,7 +69,7 @@ class Db final
 	}
 
 	template<DbStorable T>
-	int GetContainerIndex() {
+	int GetContainerIndex() const {
 		if constexpr (std::is_same_v<T, Log>) {
 			return 0;
 		}
@@ -121,6 +123,8 @@ class Db final
 			}
 		}
 	}
+#pragma endregion
+
 	static Db* db;
 
 	std::list<std::shared_ptr<Employee>> Employees{};
@@ -128,9 +132,26 @@ class Db final
 	std::list<std::shared_ptr<Product>> Products{};
 	std::list<std::shared_ptr<Log>> Logs{};
 
+	std::string files[FileCount]{};
+
 	std::vector<int> LatestIds{};
 public:
-	std::string files[FileCount]{};
+	Db(Db& other) = delete;
+	Db(Db&& other) = delete;
+
+	void operator=(const Db&) = delete;
+
+	static Db* GetInstance(const std::vector<std::string> files = {
+							"Data/Logs.json",
+							"Data/Employees.json",
+							"Data/Products.json",
+							"Data/Customers.json" })
+	{
+		if (db == nullptr) {
+			db = new Db(files);
+		}
+		return db;
+	}
 
 	template<DbStorable T>
 	Db* push_back(std::shared_ptr<T> obj) {
@@ -154,23 +175,6 @@ public:
 			Customers.push_back(obj);
 		}
 		return this;
-	}
-
-	Db(Db& other) = delete;
-	Db(Db&& other) = delete;
-
-	void operator=(const Db&) = delete;
-
-	static Db* GetInstance(const std::vector<std::string> files = {
-							"Data/Logs.json",
-							"Data/Employees.json",
-							"Data/Products.json",
-							"Data/Customers.json" })
-	{
-		if (db == nullptr) {
-			db = new Db(files);
-		}
-		return db;
 	}
 
 	template<DbStorable T>
@@ -197,7 +201,18 @@ public:
 		for (const auto& ptr : GetContainer<T>()) {
 			if (pred(ptr)) return ptr;
 		}
+		return nullptr;
 	}
+
+	template<DbStorable T>
+	std::list<std::shared_ptr<T>> SearchAll(Predicate<T> pred) const {
+		std::list<std::shared_ptr<T>> res{ };
+		for (const auto& ptr : GetContainer<T>()) {
+			if (pred(ptr)) res.push_back(ptr);
+		}
+		return res;
+	}
+
 
 	std::list<std::shared_ptr<IObject>> SearchAll(const char* Type, Predicate<IObject> pred) const {
 		std::list<std::shared_ptr<IObject>> res{ };

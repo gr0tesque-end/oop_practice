@@ -23,3 +23,27 @@
 	"Authority": "0",
 	"Pass": "a123"
 },
+{
+	"Object": "Customer",
+	"Id": "4",
+	"Name": "user1",
+	"Balance": "39.48",
+	"Authority": "0",
+	"Pass": "123"
+},
+{
+	"Object": "Customer",
+	"Id": "5",
+	"Name": "Emp123",
+	"Balance": "0",
+	"Authority": "99",
+	"Pass": "123"
+},
+{
+	"Object": "Customer",
+	"Id": "6",
+	"Name": "emp1",
+	"Balance": "0",
+	"Authority": "0",
+	"Pass": "123"
+},

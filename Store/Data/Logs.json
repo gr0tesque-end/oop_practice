@@ -107,3 +107,93 @@
 	"Executioner": "1",
 	"CreatedBy": "Customer"
 },
+{
+	"Object": "Log",
+	"Id": "14",
+	"Action": "2",
+	"Arg(s)": "[ "Msg > Success","ProductId: 2" ]",
+	"Description": "Reprice",
+	"Executioner": "0",
+	"CreatedBy": "Employee"
+},
+{
+	"Object": "Log",
+	"Id": "15",
+	"Action": "2",
+	"Arg(s)": "[ "Msg > Success","ProductId: 3" ]",
+	"Description": "Rename",
+	"Executioner": "0",
+	"CreatedBy": "Employee"
+},
+{
+	"Object": "Log",
+	"Id": "16",
+	"Action": "2",
+	"Arg(s)": "[ "Msg > Success","ProductId: 3" ]",
+	"Description": "Restock",
+	"Executioner": "0",
+	"CreatedBy": "Employee"
+},
+{
+	"Object": "Log",
+	"Id": "17",
+	"Action": "3",
+	"Arg(s)": "[ "30.2" ]",
+	"Description": "Deposit",
+	"Executioner": "4",
+	"CreatedBy": "Customer"
+},
+{
+	"Object": "Log",
+	"Id": "18",
+	"Action": "0",
+	"Arg(s)": "[ "Msg > Success","4.640000","ProductId: 3" ]",
+	"Description": "Purchase",
+	"Executioner": "4",
+	"CreatedBy": "Customer"
+},
+{
+	"Object": "Log",
+	"Id": "19",
+	"Action": "4",
+	"Arg(s)": "[ "18","13.920000","ProcessedBy: 0" ]",
+	"Description": "Refund_accept",
+	"Executioner": "4",
+	"CreatedBy": "Customer"
+},
+{
+	"Object": "Log",
+	"Id": "20",
+	"Action": "0",
+	"Arg(s)": "[ "Msg > Success","15.360000","ProductId: 2" ]",
+	"Description": "Purchase",
+	"Executioner": "1",
+	"CreatedBy": "Customer"
+},
+{
+	"Object": "Log",
+	"Id": "21",
+	"Action": "4",
+	"Arg(s)": "[ "20","15.360000","ProcessedBy: 0" ]",
+	"Description": "Refund_accept",
+	"Executioner": "1",
+	"CreatedBy": "Customer"
+},
+{
+	"Object": "Log",
+	"Id": "22",
+	"Action": "2",
+	"Arg(s)": "[ "Msg > Success","ProductId: 6" ]",
+	"Description": "Create new Product",
+	"Executioner": "0",
+	"CreatedBy": "Employee"
+},
+{
+	"Object": "Log",
+	"Id": "23",
+	"Action": "2",
+	"Arg(s)": "[ "Msg > Success","ProductId: 6" ]",
+	"Description": "Reprice",
+	"Executioner": "0",
+	"CreatedBy": "Employee"
+},

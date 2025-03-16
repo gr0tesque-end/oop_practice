@@ -14,6 +14,7 @@ const char* Purchase_NotFound = Log_NotFound;
 const char* Type_NotFound = " > Unrecognised type > ";
 
 class CLI;
+class Store;
 
 template <typename T>
 concept IsAuthorisedClass =
@@ -37,6 +38,7 @@ public:
 
 	ProcessingAction SearchFunc;
 
+#pragma region C-Bound methods
 	// c-bound
 	void RefundReq(const std::vector<std::string>& data) {
 		if (!acc_customer) {
@@ -47,9 +49,20 @@ public:
 		int id = atoi(data[0].c_str());
 		int cusId = acc_customer->GetId();
 
+		// Check if Refund exists
+		if (auto r = db->Search<Log>([&](std::shared_ptr<Log> l) {
+			auto desc = l->GetDescription();
+			bool t = desc.starts_with("Refund");
+			return t &&
+				l->HasArg(data[0]);
+			})) {
+			std::cout << Message_Fail << " > " << "Refund has already been requested" << std::endl;
+			return;
+		}
+
 		auto l = db->Search<Log>([cusId, id](auto l) {
 			return l->GetDescription() == "Purchase" &&
-				(l->ExecutionerId != cusId || l->id != id);
+				(l->ExecutionerId == cusId && l->id == id);
 			});
 
 		if (!l) { std::cout << Message_Fail << Purchase_NotFound << std::endl; return; }
@@ -158,6 +171,9 @@ public:
 
 		std::cout << Message_Success << std::endl;
 	}
+#pragma endregion
+
+#pragma region E-Bound methods
 	// e-bound
 	void CreateProduct(const std::vector<std::string>& data /* Name, Price, Stock*/) {
 		if (!acc_employee) {
@@ -247,11 +263,63 @@ public:
 		db->Flush<Log>();
 	}
 
+	// e-bound
+	void ModProduct(const std::vector<std::string>& data /* id, Action{ Rename, Restock, Reprice }, New Value */) {
+		if (!acc_employee) {
+			std::cout << Message_Fail << " > " << Employee_NotBound << std::endl;
+			return;
+		}
+		int targetId = atoi(data[0].c_str());
+		auto p = db->Search<Product>([targetId](auto p) {
+			return p->GetId() == targetId;
+			});
+
+		if (!p) {
+			std::cout << Message_Fail << " > " << Product_NotFound << std::endl;
+			return;
+		}
+
+		std::function<const char* (char n, const std::string& newV)> f = [p](char n, const std::string& newV) -> const char* {
+			if (n == '1') {
+				p->Rename(newV);
+				return "Rename";
+			}
+			else if (n == '2') {
+				p->SetQuantity(atoi(newV.c_str()));
+				return "Restock";
+			}
+			else if (n == '3') {
+				p->SetPrice((float)atof(newV.c_str()));
+				return "Reprice";
+			}
+			else {
+				return nullptr;
+			}
+			};
+		const char* ac = f(data[1][0], data[2]);
+
+		if (!ac) {
+			std::cout << Message_Fail << " > " << "Invalid action" << std::endl;
+			return;
+		}
+
+		std::shared_ptr<Log> l = std::make_shared<Log>(-1, 2, std::vector <std::string> { Message_Success, (std::string{"ProductId: "} + std::string{data[0]}) },
+			std::string{ ac }, acc_employee->GetId(), std::string{ "Employee" });
+
+		std::cout << Message_Success << std::endl;
+		db->push_back(l)
+			->Flush<Log>(true)
+			->Flush<Product>();
+	}
+#pragma endregion
+
+#pragma region Binding Methods
 	Store& BindCustomer(std::shared_ptr<Customer>& customer) { acc_customer = customer; return *this; }
 	void UnbindCustomer() { acc_customer = nullptr; }
 
 	Store& BindEmployee(std::shared_ptr<Employee>& employee) { acc_employee = employee; return *this; }
 	void UnbindEmployee() { acc_employee = nullptr; }
+#pragma endregion
 
 	std::stringstream Catalog() const {
 		std::stringstream res;
@@ -262,27 +330,6 @@ public:
 				<< "| Name: " << p->GetName() << std::endl
 				<< "| Price: " << p->GetPrice() << std::endl
 				<< "| Stock: " << p->GetQuantity() << std::endl;
-		}
-		return res;
-	}
-	// (c|e)-bound
-	std::stringstream Get_AcountRelated_Logs_str() const {
-		std::stringstream res{};
-
-		if (!acc_customer && !acc_employee) {
-			res << Message_Fail << " > " << Account_NotBound << std::endl;
-			return res;
-		}
-
-		int id = (acc_customer ? acc_customer->GetId() : acc_employee ? acc_customer->GetId() : -1);
-		if (id == -1) return res;
-		for (std::shared_ptr<Log> l : db->Logs) {
-			if (l->ExecutionerId != id) continue;
-			res << " ---------" << std::endl
-				<< "| LogId: " << l->GetId() << std::endl
-				<< "| Action: " << l->action << std::endl
-				<< "| Description: " << l->Description.str() << std::endl
-				<< "| Args: " << Misc::ArrToStr(l->args) << std::endl;
 		}
 		return res;
 	}
@@ -325,7 +372,7 @@ public:
 						// Value
 						if (i % 4 == 3) {
 							if (!isIntegral) return dataInner[0] == p;
-							
+
 							float val{ static_cast<float>(atof(p.c_str())) };
 
 							switch (op)
@@ -351,14 +398,34 @@ public:
 						foundParam = toupper(param[0]) == p[0];
 					}
 				}
-				// if after the loop, foundParam is still false
-				// then param wasn't found
 				return false;
-				})) 
+				}))
 			{
 				search_result.push_back(item->ToString().str());
 			}
 		};
+	}
+
+	// (c|e)-bound
+	std::stringstream Get_AcountRelated_Logs_str() const {
+		std::stringstream res{};
+
+		if (!acc_customer && !acc_employee) {
+			res << Message_Fail << " > " << Account_NotBound << std::endl;
+			return res;
+		}
+
+		int id = (acc_customer ? acc_customer->GetId() : acc_employee ? acc_customer->GetId() : -1);
+		if (id == -1) return res;
+		for (std::shared_ptr<Log> l : db->Logs) {
+			if (l->ExecutionerId != id) continue;
+			res << " ---------" << std::endl
+				<< "| LogId: " << l->GetId() << std::endl
+				<< "| Action: " << l->action << std::endl
+				<< "| Description: " << l->Description.str() << std::endl
+				<< "| Args: " << Misc::ArrToStr(l->args) << std::endl;
+		}
+		return res;
 	}
 
 	std::string Log_to_string(std::shared_ptr<Log> l) const {

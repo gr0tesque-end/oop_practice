@@ -10,13 +10,13 @@
 	"Object": "Product",
 	"Id": "2",
 	"Name": "Chair",
-	"Price": "5.34",
-	"Quantity": "10"
+	"Price": "5.12",
+	"Quantity": "7"
 },
 {
 	"Object": "Product",
 	"Id": "3",
-	"Name": "Ketchup",
+	"Name": "Tomato Sauce",
 	"Price": "2.32",
 	"Quantity": "30"
 },
@@ -33,4 +33,11 @@
 	"Name": "Potatoes 1kg",
 	"Price": "0.6",
 	"Quantity": "150"
+},
+{
+	"Object": "Product",
+	"Id": "6",
+	"Name": "Tea",
+	"Price": "4.3",
+	"Quantity": "15"
 },

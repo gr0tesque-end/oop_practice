@@ -14,4 +14,12 @@
 	"Sales": "0",
 	"Authority": "101",
 	"Pass": "j123"
-}
+},
+{
+	"Object": "Employee",
+	"Id": "2",
+	"Name": "emp2",
+	"Sales": "0",
+	"Authority": "100",
+	"Pass": "123"
+},

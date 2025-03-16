@@ -9,7 +9,7 @@
 enum LogAction {
 	Buy = 0,
 	Return = 1,
-	Restock = 2,
+	ChangeProd = 2,
 	Deposit = 3,
 	Refund = 4
 };
@@ -106,6 +106,20 @@ public:
 
 	bool operator==(std::string desc) const {
 		return this->Description.str() == desc;
+	}
+	bool operator<(const int execId) const {
+		return ExecutionerId == execId;
+	}
+	bool operator<(const std::string& Type) const {
+		return CreatedBy == Type;
+	}
+
+	bool HasArg(const std::string& arg) const {
+		for (const auto& s: args)
+		{
+			if (s == arg) return true;
+		}
+		return false;
 	}
 
 	/*

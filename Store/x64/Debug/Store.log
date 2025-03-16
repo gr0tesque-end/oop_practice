@@ -11,16 +11,13 @@ C:\Projects\Store\Store\Misc.h(24,19): warning C4244: 'initializing': conversion
 C:\Projects\Store\Store\Log.h(51,55): warning C4309: 'argument': truncation of constant value
   (compiling source file 'Store.cpp')
   
-C:\Projects\Store\Store\Store.h(143,18): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Projects\Store\Store\Store.h(156,18): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Store.cpp')
   
-C:\Projects\Store\Store\Store.h(228,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Projects\Store\Store\Store.h(244,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Store.cpp')
   
-C:\Projects\Store\Store\Store.h(238,18): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Projects\Store\Store\Store.h(254,18): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
   (compiling source file 'Store.cpp')
   
-C:\Projects\Store\Store\Db.h(200,1): warning C4715: 'Db::Search<Product>': not all control paths return a value
-C:\Projects\Store\Store\Db.h(200,1): warning C4715: 'Db::Search<Log>': not all control paths return a value
-C:\Projects\Store\Store\Db.h(200,1): warning C4715: 'Db::Search<Customer>': not all control paths return a value
   Store.vcxproj -> C:\Projects\Store\x64\Debug\Store.exe

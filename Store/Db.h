@@ -11,25 +11,11 @@ class Db;
 template<typename T>
 concept DbStorable = std::is_base_of_v<IIdentifiable, T>;
 
-enum Objs {
-	Logs = 0,
-	Employees = 1,
-	Products = 2,
-	Customers = 3
-};
-
 template<typename T>
 using Predicate = std::function<bool(std::shared_ptr<T>)>;
 
 class Db final
 {
-	/*template<DbStorable T>
-	static std::shared_ptr<T> GenerateObject(const std::list<std::pair<std::string, std::string>>* obj)
-	{
-		IIdentifiable* obj = generateObject(*obj);
-		return std::make_shared<T>(dynamic_cast<T*>(obj));
-	}*/
-
 	template<DbStorable T>
 	std::list<std::shared_ptr<T>> GetContainer() const {
 		if constexpr (std::is_same_v<T, Log>) {
@@ -48,10 +34,10 @@ class Db final
 		}
 	}
 
-	template<DbStorable T>
-	std::list<std::shared_ptr<IObject>> CastToBase() const {
-		std::list<std::shared_ptr<IObject>> res{};
-		for (const auto& elem : GetContainer<T>()) {
+	template<DbStorable ChildT, class BaseT>
+	std::list<std::shared_ptr<BaseT>> CastContainerToBase() const {
+		std::list<std::shared_ptr<BaseT>> res{};
+		for (const auto& elem : GetContainer<ChildT>()) {
 			res.push_back(elem);
 		}
 		return res;
@@ -61,16 +47,16 @@ class Db final
 		switch (Type[0])
 		{
 		case 'L':
-			return CastToBase<Log>();
+			return CastContainerToBase<Log, IObject>();
 			break;
 		case 'E':
-			return CastToBase<Employee>();
+			return CastContainerToBase<Employee, IObject>();
 			break;
 		case 'C':
-			return CastToBase<Customer>();
+			return CastContainerToBase<Customer, IObject>();
 			break;
 		case 'P':
-			return CastToBase<Product>();
+			return CastContainerToBase<Product, IObject>();
 			break;
 		default:
 			break;
@@ -81,7 +67,7 @@ class Db final
 	}
 
 	template<DbStorable T>
-	int GetIndex() {
+	int GetContainerIndex() {
 		if constexpr (std::is_same_v<T, Log>) {
 			return 0;
 		}
@@ -134,25 +120,6 @@ class Db final
 				LatestIds[i] = id;
 			}
 		}
-
-		/*if (auto* item = dynamic_cast<Product*>(obj.get())) {
-			Products.push_back(item);
-		}
-		else if (auto* item = dynamic_cast<Log*>(obj.get())) {
-			Logs.push_back(item);
-		}
-		else if (auto* item = dynamic_cast<Customer*>(obj.get())) {
-			Customers.push_back(item);
-		}
-		else if (auto* item = dynamic_cast<Employee*>(obj.get())) {
-			Employees.push_back(item);
-		}
-		else {
-			std::cerr << "Unknown object type!\n";
-		}*/
-
-		//GlobalList.push_back(&Employees);
-
 	}
 	static Db* db;
 
@@ -216,46 +183,13 @@ public:
 				});
 		}
 
-		Serializer::Serialize(*cont.front(), files[GetIndex<T>()], std::ios::out);
+		Serializer::Serialize(*cont.front(), files[GetContainerIndex<T>()], std::ios::out);
 		for (int i{}; auto & o: cont)
 		{
 			if (i++ == 0) continue;
-			Serializer::Serialize(*o, files[GetIndex<T>()], std::ios::app);
+			Serializer::Serialize(*o, files[GetContainerIndex<T>()], std::ios::app);
 		}
 		return this;
-	}
-
-	/*template<isStoredInDb T>
-	T* Find(int id) {
-		for (auto p : GlobalList) {
-			if (p->GetId() == id) return dynamic_cast<T*>(p);
-		}
-	}*/
-
-	std::shared_ptr<Product> SearchProduct(Predicate<Product> prod) const {
-		for (std::shared_ptr<Product> p : Products) {
-			if (prod(p)) return p;
-		}
-		return nullptr;
-	}
-
-	std::shared_ptr<Log> SearchPurchase(Predicate<Log> pred) const {
-
-		for (std::shared_ptr<Log> l : Logs) {
-			if (l->Description.str() == "Purchase") {
-				if (pred(l)) return l;
-			}
-		}
-
-		return nullptr;
-	}
-
-	std::shared_ptr<Customer> SearchCustomer(Predicate<Customer> pred) const {
-		for (std::shared_ptr<Customer> c : Customers)
-		{
-			if (pred(c)) return c;
-		}
-		return nullptr;
 	}
 
 	template<DbStorable T>

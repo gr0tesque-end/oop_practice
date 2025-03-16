@@ -20,39 +20,7 @@ C:\Projects\Store\Store\Store.h(228,16): warning C4244: 'initializing': conversi
 C:\Projects\Store\Store\Store.h(238,18): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
   (compiling source file 'Store.cpp')
   
-C:\Projects\Store\Store\Store.h(325,11): error C2760: syntax error: 'return' was unexpected here; expected 'expression'
-  (compiling source file 'Store.cpp')
-  
-C:\Projects\Store\Store\Store.h(325,28): error C2760: syntax error: ')' was unexpected here; expected ';'
-  (compiling source file 'Store.cpp')
-  
-C:\Projects\Store\Store\Store.h(325,28): error C2760: syntax error: ')' was unexpected here; expected '}'
-  (compiling source file 'Store.cpp')
-  
-C:\Projects\Store\Store\Store.h(362,6): error C2059: syntax error: ')'
-  (compiling source file 'Store.cpp')
-  
-C:\Projects\Store\Store\Store.h(362,7): error C2059: syntax error: ')'
-  (compiling source file 'Store.cpp')
-  
-C:\Projects\Store\Store\Store.h(363,4): error C2059: syntax error: '{'
-  (compiling source file 'Store.cpp')
-  
-C:\Projects\Store\Store\Store.h(363,4): error C2143: syntax error: missing ';' before '{'
-  (compiling source file 'Store.cpp')
-  
-C:\Projects\Store\Store\Store.h(364,29): error C2065: 'item': undeclared identifier
-  (compiling source file 'Store.cpp')
-  
-C:\Projects\Store\Store\Store.h(367,2): error C2059: syntax error: '}'
-  (compiling source file 'Store.cpp')
-  
-C:\Projects\Store\Store\Store.h(367,2): error C2143: syntax error: missing ';' before '}'
-  (compiling source file 'Store.cpp')
-  
-C:\Projects\Store\Store\Store.h(369,58): error C2143: syntax error: missing ';' before '{'
-  (compiling source file 'Store.cpp')
-  
-C:\Projects\Store\Store\Store.h(369,58): error C2447: '{': missing function header (old-style formal list?)
-  (compiling source file 'Store.cpp')
-  
+C:\Projects\Store\Store\Db.h(200,1): warning C4715: 'Db::Search<Product>': not all control paths return a value
+C:\Projects\Store\Store\Db.h(200,1): warning C4715: 'Db::Search<Log>': not all control paths return a value
+C:\Projects\Store\Store\Db.h(200,1): warning C4715: 'Db::Search<Customer>': not all control paths return a value
+  Store.vcxproj -> C:\Projects\Store\x64\Debug\Store.exe
